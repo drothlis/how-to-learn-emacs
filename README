@@ -1,0 +1,60 @@
+"How to learn Emacs" <http://david.rothlis.net/emacs/howtolearn.html>
+is a guide aimed at computer programmers who want to master the GNU Emacs
+text editor.
+
+
+Generating HTML from the source HAML files
+==========================================
+
+The document source is in Haml + Markdown format: Haml for HTML block
+structure, and Markdown for paragraphs and formatting.
+
+Haml uses significant indentation:
+
+    HAML                HTML
+    #about              <div id='about'>
+      *Hello* there       *Hello* there
+                        </div>
+
+See <http://haml-lang.com> for details.
+
+I use a custom fork† of Haml that automatically formats plain-text content
+through Markdown‡, so the above Haml example actually converts to:
+
+    <div id='about'>
+      <p>
+        <em>Hello</em> there
+      </p>
+    </div>
+
+† <https://github.com/drothlis/haml/wiki>  
+‡ <http://daringfireball.net/projects/markdown/syntax>
+
+To install all the necessary tools: (on a Unixy system: Linux, OS X, etc.)
+
+1. Install ruby and rubygems (the ruby package manager) with your system's
+package manager (macports or homebrew on OS X, apt-get or yum on some Linux
+distributions, etc.). You may already have these installed (try `ruby` and
+`gem` at the terminal). On some systems the `rubygems` package is called
+`rb-rubygems`.
+
+2. Use `gem` to install the rdiscount package (a Markdown implementation):  
+`gem install rdiscount`
+
+3. Clone this repository:  
+`git clone git://github.com/drothlis/how-to-learn-emacs.git`
+
+4. Fetch the haml submodule of this repository:  
+`cd how-to-learn-emacs`  
+`git submodule init`  
+`git submodule update`
+
+5. Build the HTML from the Haml sources:  
+`make`
+
+
+Why are the generated HTML files tracked in the git repository?
+===============================================================
+
+So that I can easily see the effects of changes to the scripts that generate
+the HTML.

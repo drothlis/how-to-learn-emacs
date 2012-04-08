@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Ergonomics
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li class='current'>A. Ergonomics</li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Ergonomics</h1>
+<p>Most of the following advice relies heavily on the Control key, so bind your
+Caps Lock to Control. This is easy to do on <a href="osx.html">OS X</a> and Linux, and on
+Windows involves <a href="http://sites.google.com/site/steveyegge2/effective-emacs#item1">changing a registry entry</a>.</p>
+
+<p>You may choose to swap the left Control key with Caps Lock, or just to make
+them both Control keys — in Emacs and bash you can uppercase a word with <code><a class='glossary' href='glossary.html#keys'>M-u</a></code>
+(upcase-word) and <a class='glossary' href='glossary.html#region'>the region</a> with <code><a class='glossary' href='glossary.html#keys'>C-x C-u</a></code> (upcase-region).</p>
+
+<p>Now you will find the navigation keys like <code><a class='glossary' href='glossary.html#keys'>C-f</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-b</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-n</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-p</a></code> much
+closer to your home row position than the arrow keys. Learn to navigate in
+larger jumps with <code><a class='glossary' href='glossary.html#keys'>C-a</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-e</a></code> (beggining and end of line), <code><a class='glossary' href='glossary.html#keys'>M-f</a></code> and <code><a class='glossary' href='glossary.html#keys'>M-b</a></code>
+(forward and back by one word), <code><a class='glossary' href='glossary.html#keys'>C-M-f</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-M-b</a></code> (forward and back by one
+block of parentheses or braces), and <code><a class='glossary' href='glossary.html#keys'>M-a</a></code> and <code><a class='glossary' href='glossary.html#keys'>M-e</a></code> (beginning and end of a
+sentence or expression).</p>
+
+<p>If you need to move to a far-away position it is often faster to get there by
+searching with <code><a class='glossary' href='glossary.html#keys'>C-s</a></code>.</p>
+
+<p>For fixing typos, <code><a class='glossary' href='glossary.html#keys'>C-t</a></code> (transpose-chars) comes in handy.</p>
+
+<p>Instead of reaching for the backspace key, consider rebinding <code><a class='glossary' href='glossary.html#keys'>C-h</a></code> to
+backspace (as in most shells), and <code><a class='glossary' href='glossary.html#keys'>C-w</a></code> to backward-kill-word (also as in most
+shells; in Emacs it is normally bound to <code><a class='glossary' href='glossary.html#keys'>C-backspace</a></code>). <code><a class='glossary' href='glossary.html#keys'>C-d</a></code> deletes the
+<em>next</em> character, and you don&rsquo;t even need to bind it yourself.</p>
+
+<p>Rebinding <code><a class='glossary' href='glossary.html#keys'>C-h</a></code> is a bit tricky, because after making your binding you might
+activate some major or <a class='glossary' href='glossary.html#minormode'>minor mode</a> that binds a new sequence beginning with
+<code><a class='glossary' href='glossary.html#keys'>C-h</a></code>, undoing your own binding. You can use <code>key-translation-map</code> to make
+<code><a class='glossary' href='glossary.html#keys'>C-h</a></code> appear to Emacs as the backspace key, ignoring all other <code><a class='glossary' href='glossary.html#keys'>C-h</a></code> bindings
+now or in future:</p>
+<div class='window'>(define-key key-translation-map (kbd <span class="string">"C-h"</span>) (kbd <span class="string">"<a class="glossary" href="glossary.html#keys">&lt;DEL&gt;</a>"</span>))&#x000A;</div>
+<p>You will still be able to access the help commands with <code>F1 f</code>, <code>F1 v</code>, <code>F1 S</code>,
+etc.</p>
+
+<p>As for <code><a class='glossary' href='glossary.html#keys'>C-w</a></code>, you could define your own function that keeps the default
+behavior when <a class='glossary' href='glossary.html#region'>the region</a> is active, and does <code>backward-kill-word</code> when not:</p>
+<div class='window'>(<span class="keyword">defun</span> <span class="function-name">kill-region-or-backward-kill-word</span> (<span class="type">&amp;optional</span> arg region)&#x000A;  <span class="doc">"`</span><span class="doc"><span class="constant">kill-region</span></span><span class="doc">' if <a class='glossary' href='glossary.html#region'>the region</a> is active, otherwise `</span><span class="doc"><span class="constant">backward-kill-word</span></span><span class="doc">'"</span>&#x000A;  (interactive&#x000A;   (list (prefix-numeric-value current-prefix-arg) (use-region-p)))&#x000A;  (<span class="keyword">if</span> region&#x000A;      (<a class='glossary' href='glossary.html#killing'>kill</a>-region (region-beginning) (region-end))&#x000A;    (backward-kill-word arg)))&#x000A;(global-set-key (kbd <span class="string">"C-w"</span>) 'kill-region-or-backward-kill-word)&#x000A;</div>
+<p>Some of these tips were inspired by Steve Yegge&rsquo;s <a href="http://sites.google.com/site/steveyegge2/effective-emacs">Effective Emacs</a> article. Read it.</p>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='osx.html'>Next: OS X</a></p>
+    </div>
+  </body>
+</html>

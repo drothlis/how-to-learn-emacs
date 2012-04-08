@@ -1,0 +1,3 @@
+[submodule "haml"]
+	path = haml
+	url = git://github.com/drothlis/haml.git

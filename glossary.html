@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Glossary
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li class='current'>D. Glossary</li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Glossary</h1>
+<dl>
+  <dt id='keys'>Emacs key names:</dt>
+  <dd>
+    <table>
+    <tr><td><code>C-x</code>     </td><td>means Control-x.                                          </td></tr>
+    <tr><td><code>C-x C-s</code> </td><td>means Control-x, then Control-s.                          </td></tr>
+    <tr><td><code>C-x k</code>   </td><td>means Control-x, then k on its own (without Control).     </td></tr>
+    <tr><td><code>M-x</code>     </td><td>means Alt-x (Alt is called Option on some Mac keyboards).<br />
+    The <code>M</code> stands for “Meta” which is presumably what the Alt
+    key was called in the 70s.                                 </td></tr>
+    <tr><td><code>M-x help</code></td><td>means press Alt-x, then type <code>help</code>, then press return.   </td></tr>
+    <tr><td><code>C-M-x</code>   </td><td>means Control-Alt-x                                       </td></tr>
+    <tr><td><code>S-x</code>     </td><td>means Shift-x                                             </td></tr>
+    <tr><td><code>s-x</code>     </td><td>means Command-x (the ⌘ Command key on Mac keyboards).<br />
+    The <code>s</code> stands for “Super”, from the days when keyboards
+    had Meta, Super, and Hyper keys.                          </td></tr>
+    <tr><td><code>&lt;RET&gt;</code></td><td>means the Return or Enter key.                         </td></tr>
+    <tr><td><code>&lt;SPC&gt;</code></td><td>means the Space bar.                                   </td></tr>
+    <tr><td><code>&lt;DEL&gt;</code></td><td>means Backspace<br />
+    (not to be confused with the delete-forward key)          </td></tr>
+    </table>
+  </dd>
+  <dt id='frames'>Frames:</dt>
+  <dd>
+    <div class='figure' id='glossary-frames'>
+      <div class='titlebar'><p>rl.c</p></div>
+      <div class='window default'><span class="type">int</span>&#x000A;<span class="function-name">main</span> (argc, argv)&#x000A;     <span class="type">int</span> <span class="variable-name">argc</span>;&#x000A;     <span class="type">char</span> **<span class="variable-name">argv</span>;&#x000A;{<span class="cursor">&nbsp;</span></div>
+      <div class='modeline'>--:---  <b>rl.c</b>          59% L83   Git-master  (C/l Abbrev)-----------------------------------</div>
+      <div class='window default'>make -k&#x000A;rm -f rl.o&#x000A;gcc -DHAVE_CONFIG_H -DREADLINE_LIBRARY -DRL_LIBRARY_VERSION='"6.2"'  -I. -I.. -I.. -g -O -c rl.c&#x000A;<span class="function-name">rl.c</span>: In function &#8216;main&#8217;:</div>
+      <div class='modeline'>-U:%*-  <b>*compilation*</b>   Top L1     (Compilation<span class="error">:exit [2]</span>)-----------------------------------</div>
+      <div class='echoarea'><p>Compilation exited abnormally with code 2</p></div>
+      <p>One frame, two windows<br />(each with its own modeline)</p>
+      
+    </div>
+    <p>What Emacs calls your window-manager&rsquo;s windows. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Frames.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='windows'>Windows:</dt>
+  <dd>
+    <p>Subdivisions inside a Frame. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Windows.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='buffers'>Buffers:</dt>
+  <dd>
+    <p>The text you are editing. The difference between a buffer and a file is
+    that their contents may differ until you save your changes; and some
+    buffers aren&rsquo;t backed by files at all (e.g. a <code>*compilation*</code> or <code>*Help*</code>
+    buffer). <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Buffers.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='modeline'>Mode line:</dt>
+  <dd>
+    <p>Describes the buffer in the window above the modeline. Hover your mouse
+    over each indicator in the modeline for a description. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Mode-Line.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='echoarea'>Echo area:</dt>
+  <dd>
+    <p>The line at the very bottom of the frame, used to display small informative
+    messages. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Echo-Area.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='minibuffer'>Minibuffer:</dt>
+  <dd>
+    <p>The echo area when it is prompting for user input. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Minibuffer.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='region'>The point, the mark and the region:</dt>
+  <dd>
+    <p>The point is where the cursor is. Set the mark with <code>C-&lt;SPC&gt;</code>, move the
+    point, and now the region is the area between point and mark. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Mark.html">[Emacs
+    manual]</a></p>
+  </dd>
+  <dt id='killing'>Killing and yanking:</dt>
+  <dd>
+    <p>Killing = cutting. Yanking = pasting (sorry vi users!). <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Killing.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='majormode'>Major mode or Editing mode:</dt>
+  <dd>
+    <p>A major mode is a customization of Emacs for editing text of a particular
+    sort (e.g. a particular programming language). A buffer can only have one
+    major mode active at a time. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Major-Modes.html">[Emacs manual]</a></p>
+  </dd>
+  <dt id='minormode'>Minor mode:</dt>
+  <dd>
+    <p>Multiple minor modes can be enabled at once; they add functionality ranging
+    from syntax highlighting to automatic spell-checking to modifying the
+    behavior of common Emacs commands. <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html">[Emacs manual]</a></p>
+  </dd>
+</dl>
+      <!-- Contents -->
+      <!-- Next chapter link -->
+    </div>
+  </body>
+</html>

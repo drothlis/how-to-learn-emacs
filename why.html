@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Why Emacs
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li class='current'>2. Why Emacs</li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Why Emacs</h1>
+<p>I believe that the future of software development, if we are to survive
+ever-increasing complexity, lies in domain-specific languages that can express
+solutions measured in hundreds of lines of code, not the tens or hundreds of
+<em>thousands</em> of lines common in today&rsquo;s software systems.</p>
+<div id='vri-examples'>
+  <div id='nile'>CompositeSoftLight : Compositor&#x000A;    ∀ (A, B)&#x000A;        C = (1 - B / B.a) × (2 × A - A.a)&#x000A;        D = B × (A.a - C) + (A ⊕ B)&#x000A;        E = B × (A.a - C × (3 - 8 × B / B.a)) + (A ⊕ B)&#x000A;        F = B × A.a + (√(B / B.a) × B.a - B) × (2 × A - A.a) + (A ⊕ B)&#x000A;        >> {D if 2 × A < A.a, E if B × 8 ≤ B.a, F}</div>
+  <p>VRI's Nile language for rendering and compositing</p>
+  <div id='tcpip-parser'>                                        { structure-diagram }&#x000A;+-------------+----------+----------+-------------------+-------------------------------------------------+&#x000A;| 00 01 02 03 | 04 05 06 | 07 08 09 | 10 11 12 13 14 15 | 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 |&#x000A;+-------------+----------+----------+-------------------+-------------------------------------------------+&#x000A;|                       sourcePort                      |                 destinationPort                 |&#x000A;+-------------------------------------------------------+-------------------------------------------------+&#x000A;|                                                 sequenceNumber                                          |&#x000A;+---------------------------------------------------------------------------------------------------------+&#x000A;|                                              acknowledgementNumber                                      |&#x000A;+-------------+----------+----------+-------------------+-------------------------------------------------+&#x000A;|    offset   | reserved |   ecn    |    controlBits    |                    window                       |&#x000A;+-------------+----------+----------+-------------------+-------------------------------------------------+&#x000A;|                       checksum                        |                 urgentPointer                   |&#x000A;+-------------------------------------------------------+-------------------------------------------------+&#x000A;                  tcp -- Transmission Control Protocol packet header [RFC 793]</div>
+  <p>VRI's language for defining bit field accessors</p>
+</div>
+<p>On the right are two examples from Alan Kay&rsquo;s Viewpoints Research Institute.
+The top one is a snippet of code in the Nile language for rendering and
+compositing. Below it, what looks like documentation is a valid program for
+encoding and decoding TCP headers: it defines accessors called tcp-sourcePort,
+tcp-destinationPort and so on. (The complete parser for this, and other
+ascii-art programs, is 77 lines of code.<a id='fnref1' href='#fn1' class='footnote'>[1]</a>) This second example may seem a
+bit gimmicky but I&rsquo;ve included it to stimulate your imagination and to show
+just how different, and data-driven, these languages can be.</p>
+
+<p>What does this have to do with Emacs? Well, if you are frequently using dozens
+of different languages, perhaps even creating your own, you want an editor that
+is easily extensible. Programmable. At the core of Emacs is an interpreter for
+Emacs Lisp, a full-fledged programming language;<a id='fnref2' href='#fn2' class='footnote'>[2]</a> plus <em>excellent</em> integrated
+help, code navigation, and a debugger. Because the interpreter is embedded in
+Emacs itself, you can write your tools and customizations interactively; your
+changes take effect immediately. (If you are familiar with other interpreted
+languages you will already know and love the convenience of a Read-Eval-Print
+Loop.) The many Emacs libraries and APIs can be overwhelming, but Emacs Lisp
+itself is quite simple.</p>
+<h2>Emacs vs. _____</h2>
+<p>“Writing an Eclipse or IntelliJ (or God help you, Visual Studio) plugin is a
+monumental effort, so almost nobody does it. This means there&rsquo;s no community of
+building and customizing your own tools [&hellip;]. Moreover, the effort to create a
+plugin is high enough that people only do it for really significant
+applications, whereas in Emacs a “plugin” can be any size at all, from a single
+line of code up through enormous systems and frameworks.”<a id='fnref3' href='#fn3' class='footnote'>[3]</a></p>
+
+<p>Of course, there are many valid, reasonable reasons <em>not</em> to learn Emacs. If
+you program entirely or mostly in Java, Windows/.NET, or OS X/iOS, there are
+compelling reasons to use Eclipse/IntelliJ, Visual Studio, or XCode,
+respectively; you will certainly get a better out-of-the-box experience, with
+IntelliSense and other IDE features that just work, at the expense of
+extensibility.</p>
+
+<p>Or maybe you just abhor complexity in your tools: One of my early
+mentors, who to this day is one of the programmers I most respect, used nothing
+but dozens of Notepad and terminal windows open at once and an extra-wide
+taskbar along the left edge of the screen to tell them apart. True story.</p>
+<h2>Some thoughts on longevity</h2>
+<p><strong>&hellip;of your language:</strong> Even if you don&rsquo;t buy the &ldquo;dozens of domain-specific
+languages&rdquo; idea, think about where you see yourself in 10 years. Will you still
+be writing programs exclusively in Java? In C++?</p>
+
+<p><strong>&hellip;of your editor:</strong> GNU Emacs has been around for almost 30 years, and
+earlier versions for 10 years before that. It is open source (and <a href="http://www.gnu.org/philosophy/free-sw.html">free</a>) software, still under active
+development, with a large, talented community writing extensions for every new
+language imaginable. Can you expect the same longevity from TextMate or Sublime
+Text or whatever the web crowd is using these days?</p>
+<div id='footnotes'>
+  <p><a id='fn1' href='#fnref1' class='footnote'>[1]</a>:
+  The Nile code snippet was taken from <a href="https://github.com/damelang/gezira/blob/master/nl/compositor.nl">Gezira</a>, a 2D
+  vector graphics renderer. Nile and Gezira are described in the <a href="http://www.vpri.org/pdf/tr2009016_steps09.pdf">Viewpoints
+  Research Institute 2009 report</a>.<br/>
+  The TCP/IP implementation is described in the <a href="http://www.vpri.org/pdf/tr2007008_steps.pdf">2007 report</a>. The source code for <a href="http://piumarta.com/svn2/idst/trunk/function/examples/tcp/net-tcp.k">TCP frames
+  is here</a> and the
+  <a href="http://piumarta.com/svn2/idst/trunk/function/examples/tcp/structure.k">ascii-art parser is here</a>.</p>
+  
+  <p><a id='fn2' href='#fnref2' class='footnote'>[2]</a>:
+  For some Lisp evangelism, read <a href="http://www.paulgraham.com/avg.html">Paul Graham</a>.</p>
+  
+  <p><a id='fn3' href='#fnref3' class='footnote'>[3]</a>:
+  Steve Yegge, <a href="http://steve-yegge.blogspot.com/2008/04/xemacs-is-dead-long-live-xemacs.html"><em>XEmacs is dead. Long live XEmacs!</em></a>.
+  Read all of Steve&rsquo;s Emacs articles for some equally conflicted (but much
+  funnier) Emacs advocacy.</p>
+</div>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='install.html'>Next: Install the right Emacs</a></p>
+    </div>
+  </body>
+</html>

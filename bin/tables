@@ -1,0 +1,37 @@
+#!/usr/bin/env perl
+
+while (<>) {
+  if (s,^( *)\| *,,) {
+    $indentation = $1;
+    print $indentation;
+    if (! $intable) {
+      $intable = 1;
+      print "<table>\n$indentation";
+    }
+    if (! $inrow) {
+      $inrow = 1;
+      print "<tr><td>"
+    }
+    s, \| ,</td><td>,g;
+    if (/\|$/) {
+      $inrow = 0;
+      s,\|$,</td></tr>,;
+    }
+    markdown();
+  }
+  elsif ($intable) {
+    $intable = 0;
+    print "$indentation</table>\n";
+  }
+  s,^( *)\\\|,$1|,;
+
+  print;
+}
+
+# My own limited markdown implementation, because the markdown invoked by my
+# toolchain ("haml --autofilter markdown" ...) doesn't touch content inside
+# <td>...</td>.
+sub markdown {
+  s,`([^`]+)`,<code>$1</code>,g;
+  s,  $,<br />,;
+}

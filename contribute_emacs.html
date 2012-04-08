@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Contributing to Emacs
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li class='current'>10. Contributing to Emacs</li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Contributing to Emacs</h1>
+<p>Please consider contributing patches to Emacs, even if you&rsquo;re an Emacs novice.
+<em>Especially</em> if you&rsquo;re an Emacs novice&mdash;no-one is better qualified to judge the
+introductory documentation. Contribute <em>now</em>, before Stockholm syndrome sets
+in!</p>
+<h2>Reporting a bug</h2>
+<p><code><a class='glossary' href='glossary.html#keys'>M-x report-emacs-bug</a></code> will open a mail <a class='glossary' href='glossary.html#buffers'>buffer</a> with a template ready for you to
+fill with information. You probably haven&rsquo;t configured Emacs to be able to send
+email, but you can copy from this <a class='glossary' href='glossary.html#buffers'>buffer</a> and paste into your favorite email
+client.</p>
+
+<p>Do follow the instructions in that <a class='glossary' href='glossary.html#buffers'>buffer</a>. In particular, make sure you can
+reproduce the bug having run Emacs with <code>emacs -Q</code> (to confirm that it is a bug
+in Emacs itself and not in your customizations or in a third-party package).</p>
+<h2>A simple documentation change</h2>
+<p>The documentation for <code>ido-find-file</code> says:</p>
+<div class='titlebar'><p>*Help*</p></div>
+<div class='window'>C-j Select the current prompt as the <a class='glossary' href='glossary.html#buffers'>buffer</a> or file.&#x000A;If no <a class='glossary' href='glossary.html#buffers'>buffer</a> or file is found, prompt for a new one.&#x000A;&nbsp;</div>
+<div class='modeline'>-U:%%-  <b>*Help*</b>         32% L22    (Help View)-----------------------------------------------</div>
+<div class='echoarea'><p>&nbsp;</p></div>
+<p>After reading that I still didn&rsquo;t know what <code><a class='glossary' href='glossary.html#keys'>C-j</a></code> (at the <code>ido-find-file</code>
+prompt) actually does. It turns out to mean &ldquo;use whatever you&rsquo;ve typed
+verbatim&rdquo; instead of using <code>ido</code>&rsquo;s fuzzy matching. I&rsquo;ll submit a patch to the
+documentation string.</p>
+<h2>Making a patch, the 1980s way</h2>
+
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x find-function ido-find-file</a></code>.</p>
+</div>
+<div class='do'>
+  <p>Save a copy of this <a class='glossary' href='glossary.html#buffers'>buffer</a> (with <code><a class='glossary' href='glossary.html#keys'>C-x C-w</a></code>) to <code>~/.emacs.d/ido.el</code> and
+  another copy to <code>~/.emacs.d/ido.el.orig</code>.</p>
+</div>
+<div class='do'>
+  <p>Modify <code>~/.emacs.d/ido.el</code>. To test the change, evaluate (<code><a class='glossary' href='glossary.html#keys'>C-M-x</a></code>) the
+  <code>defun</code> form you changed.</p>
+</div>
+<div class='do'>
+  <p>Generate a patch with <code>diff -cp ido.el.orig ido.el</code>.<a id='fnref1' href='#fn1' class='footnote'>[1]</a></p>
+</div>
+<div class='titlebar'><p>ido.el.patch</p></div>
+<div class='window'><span class="diff-header">*** </span><span class="diff-header"><span class="diff-file-header">ido.el.orig</span></span><span class="diff-header"> 2012-04-07 10:20:31.000000000 +0100&#x000A;--- </span><span class="diff-header"><span class="diff-file-header">ido.el</span></span><span class="diff-header">      2012-04-07 10:28:59.000000000 +0100&#x000A;</span><span class="diff-hunk-header">***************</span><span class="diff-function"> (defun ido-switch-buffer ()</span>&#x000A;<span class="diff-hunk-header">*** 4041,4048 ****</span>&#x000A;<span class="diff-context">  RET Select the <a class='glossary' href='glossary.html#buffers'>buffer</a> at the front of the list of matches.  If the&#x000A;  list is empty, possibly prompt to create new <a class='glossary' href='glossary.html#buffers'>buffer</a>.&#x000A;&#x000A;</span><span class="diff-indicator-changed">!</span><span class="diff-changed"> \\[ido-select-text] Select the current prompt as the <a class='glossary' href='glossary.html#buffers'>buffer</a>.&#x000A;</span><span class="diff-indicator-changed">!</span><span class="diff-changed"> If no <a class='glossary' href='glossary.html#buffers'>buffer</a> is found, prompt for a new one.&#x000A;</span><span class="diff-context">&#x000A;  \\[ido-next-match] Put the first element at the end of the list.&#x000A;  \\[ido-prev-match] Put the last element at the start of the list.&#x000A;</span><span class="diff-hunk-header">--- 4041,4047 ----</span>&#x000A;<span class="diff-context">  RET Select the <a class='glossary' href='glossary.html#buffers'>buffer</a> at the front of the list of matches.  If the&#x000A;  list is empty, possibly prompt to create new <a class='glossary' href='glossary.html#buffers'>buffer</a>.&#x000A;&#x000A;</span><span class="diff-indicator-changed">!</span><span class="diff-changed"> \\[ido-select-text] Use the current input string verbatim.&#x000A;</span><span class="diff-context">&#x000A;  \\[ido-next-match] Put the first element at the end of the list.&#x000A;  \\[ido-prev-match] Put the last element at the start of the list.&#x000A;</span><span class="diff-hunk-header">***************</span><span class="diff-function"> (defun ido-find-file ()</span>&#x000A;<span class="diff-hunk-header">*** 4128,4135 ****</span>&#x000A;<span class="diff-context">  RET Select the file at the front of the list of matches.  If the&#x000A;  list is empty, possibly prompt to create new file.&#x000A;&#x000A;</span><span class="diff-indicator-changed">!</span><span class="diff-changed"> \\[ido-select-text] Select the current prompt as the <a class='glossary' href='glossary.html#buffers'>buffer</a> or file.&#x000A;</span><span class="diff-indicator-changed">!</span><span class="diff-changed"> If no <a class='glossary' href='glossary.html#buffers'>buffer</a> or file is found, prompt for a new one.&#x000A;</span><span class="diff-context">&#x000A;  \\[ido-next-match] Put the first element at the end of the list.&#x000A;  \\[ido-prev-match] Put the last element at the start of the list.&#x000A;</span><span class="diff-hunk-header">--- 4127,4133 ----</span>&#x000A;<span class="diff-context">  RET Select the file at the front of the list of matches.  If the&#x000A;  list is empty, possibly prompt to create new file.&#x000A;&#x000A;</span><span class="diff-indicator-changed">!</span><span class="diff-changed"> \\[ido-select-text] Use the current input string verbatim.&#x000A;</span><span class="diff-context">&#x000A;  \\[ido-next-match] Put the first element at the end of the list.&#x000A;  \\[ido-prev-match] Put the last element at the start of the list.&#x000A;</span></div>
+<div class='modeline'>-U:---  <b>ido.el.patch</b>   Top L1    (Diff)-----------------------------------------------</div>
+<div class='echoarea'><p>&nbsp;</p></div>
+<h2>Making a patch in the 21st century<a id='fnref2' href='#fn2' class='footnote'>[2]</a></h2>
+<p>Ideally you&rsquo;d make the patch against the latest (unreleased) version of the
+Emacs source code, instead of version 23.3. Someone else might even have fixed
+your problem already! The Emacs source code is hosted at <a href="http://savannah.gnu.org/projects/emacs">savannah.gnu.org</a> and you can grab the source code from
+the official Bazaar repository:</p>
+<div class='do'>
+  <p><code>bzr branch bzr://bzr.savannah.gnu.org/emacs/trunk</code></p>
+</div>
+<p>Or, if you prefer git, from the git mirror (which can <a href="http://emacswiki.org/emacs/EmacsFromGit">allegedly</a> be up to one day behind the Bazaar
+repo):</p>
+<div class='do'>
+  <p><code>git clone git://git.savannah.gnu.org/emacs.git</code></p>
+</div>
+<p>Note that either one of the above commands will take quite a while, but you&rsquo;ll
+only do it once. I&rsquo;ll use git in the following instructions.</p>
+<div class='do'>
+  <p>Create a private (local) branch for your changes:<br/>
+  <code>git checkout -b ido-el-documentation --track master</code></p>
+</div>
+<div class='do'>
+  <p>Make the change on the source files directly. Test.</p>
+</div>
+<div class='do'>
+  <p><code>git commit -am "* ido.el: Documentation for C-j in ido-find-file and ido-switch-buffer."</code></p>
+</div>
+<div class='do'>
+  <p><code>git format-patch master</code></p>
+</div>
+<p>In future, before starting on another change you&rsquo;ll want to pull the latest
+changes from upstream:</p>
+<div class='do'>
+  <p><code>git checkout master</code><br/>
+  <code>git pull --rebase</code><a id='fnref3' href='#fn3' class='footnote'>[3]</a></p>
+</div>
+<h2>Send the patch</h2>
+<p>Send the patch to the same email address as <code><a class='glossary' href='glossary.html#keys'>M-x report-emacs-bug</a></code>. But first
+read the <a href="http://git.savannah.gnu.org/cgit/emacs.git/plain/etc/CONTRIBUTE">instructions for contributing to Emacs</a> and the <a href="http://www.gnu.org/software/emacs/manual/html_node/elisp/Tips.html">Emacs
+Lisp tips and conventions</a>.</p>
+<h2>Contributing to third-party packages</h2>
+<p>Try to find contribution guidelines on the package&rsquo;s website: Where to email
+your patch, the preferred formatting of the patch and its changelog message,
+etc.</p>
+
+<p>If the package is hosted on github, the package maintainers may be open to pull
+requests via github&rsquo;s interface.</p>
+<div id='footnotes'>
+  <p><a id='fn1' href='#fnref1' class='footnote'>[1]</a>:
+  Don&rsquo;t ask me why the Emacs maintainers don&rsquo;t like unified diffs (<code>diff -u</code>).
+  They <a href="http://git.savannah.gnu.org/cgit/emacs.git/tree/etc/CONTRIBUTE?id=9771cd41#n103">specifically ask</a>
+  for <code>diff -c</code>.</p>
+  
+  <p><a id='fn2' href='#fnref2' class='footnote'>[2]</a>:
+  The 21st century requires half a gig of disk space and a 30-minute download.</p>
+  
+  <p><a id='fn3' href='#fnref3' class='footnote'>[3]</a>:
+  The <code>--rebase</code> is to avoid complicated merges in the history if you have
+  local un-pushed commits on the master branch. Though if you&rsquo;ve followed these
+  instructions, your local changes should only ever be on private branches, not
+  on master.</p>
+</div>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='ergonomics.html'>Next: Ergonomics</a></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+%h1 Info documentation
+
+%h2#path Info file search path
+
+The [Info manual](
+http://www.gnu.org/software/texinfo/manual/info/html_node/Emacs-Info-Variables.html)
+tells us about variable `Info-default-directory-list`:
+
+.do
+  .window<
+    :preserve
+      (<span class="keyword">eval-after-load</span> 'info
+        '(<span class="keyword">progn</span>
+           (push <span class="string">"/opt/local/share/info"</span> Info-default-directory-list)
+           (push <span class="string">"~/.emacs.d/info"</span> Info-default-directory-list)))
+
+The first is the directory for info files installed by my package manager
+(macports); modify the path according to your own system. The second directory
+is where we'll install info files manually.
+
+
+%h2#glibc glibc
+
+[`glibc`]( http://www.gnu.org/software/libc/) ("gee lib cee") is the GNU
+implementation of `libc`, the Unix standard C library. Don't confuse it with
+`glib`, which is a library from the GNOME desktop project.
+
+If you're not developing for a GNU/Linux system, but you don't find
+`info`-format documentation for your system's own `libc`, you might still find
+the GNU docs useful. `glibc` follows the ISO C 99 and POSIX standards, and its
+documentation is always careful to point out where a feature is non-standard.
+Common Unix variations are covered (e.g. the BSD and SysV styles of signal
+handling).
+
+.do
+  Download "Info document (gzipped tar file)" from [the GNU website](
+  http://www.gnu.org/software/libc/manual/).
+
+  Untar into `~/.emacs.d/info/`
+
+  `cd ~/.emacs.d/info`  
+  `install-info libc.info dir`
+
+`install-info` is provided by the texinfo package, which you can install with
+your system's package manager.
+
+The generated `dir` file contains an entry for every function and constant in
+libc. These entries are added to your top-level Info menu. It is easy to remove
+these from the top-level menu (you will still be able to find them via Info's
+`i`ndex command or by searching): The `dir` file is plain text, so you can edit
+it and remove those entries. Leave the single libc entry under "Libraries".
+
+Now visit a C file and use `info-lookup-symbol` to look up, say, `socket`. Go
+`u`p to the main sockets node for introductory material.
+
+
+%h2#python Python
+
+Install [pydoc-info.el](
+https://bitbucket.org/jonwaltman/pydoc-info/src/default/pydoc-info.el) (we
+covered elisp package installation in a [previous chapter](
+customize_colours.html#packages)) and follow the instructions under "Setup and
+Install" in [pydoc-info's README](
+https://bitbucket.org/jonwaltman/pydoc-info).
+
+
+%h2#perl Perl
+
+I've found [info docs for perl 5.6](
+http://www.cpan.org/doc/manual/texinfo/perl5/) (over a decade old now). If you
+know of a more recent version, or know how to build info files from the latest
+perl docs, please send me detailed instructions.
+
+And spread the word! It's a shame that such a well-integrated documentation
+system hasn't received more support from popular software distributions.

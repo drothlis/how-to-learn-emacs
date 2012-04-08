@@ -1,0 +1,67 @@
+%h1 The very basics
+
+.do#first-key-sequence
+  Work through the Emacs tutorial: Start Emacs and press `C-h t`.
+
+If the tutorial seems a bit tedious, soldier on. It will only take you 30
+minutes, at most; and the material is essential for understanding Emacs. Most
+of the cursor movement and text manipulation keybindings you'll learn will also
+work in the bash shell (or any program that uses the readline library) and, if
+you use OS X, even in the text fields of any native GUI application.
+
+Do not proceed to the next chapter of this guide until you have read the entire
+tutorial, and you are comfortable with:
+
+| Visiting (opening) and saving files: | `C-x C-f` and `C-x C-s`            |
+| Switching between buffers:           | `C-x b` and `C-x C-b`              |
+| Using the mark and the point  
+|   to set the region:                 | `C-SPC`                            |
+| Killing (cutting) and
+|   yanking (pasting):                 | `C-w`, `C-k`, `C-y`, `M-y`         |
+| Searching forwards and backwards:    | `C-s`, `C-r`                       |
+| Invoking commands by name:           | `M-x`                              |
+| Undo:                                | `C-/`                              |
+| Cancelling half-entered commands:    | `C-g`                              |
+| Getting help on editing modes,  
+|   keybindings and commands:          |   
+|                                        `C-h m`, `C-h k`, `C-h f`, `C-h a`  
+|                                          (just remember `C-h` and read  
+|                                          the prompt in the minibuffer)    |
+| Quitting Emacs:                      | `C-x C-c`                          |
+
+.figure.first
+  %img(src="images/filemenu.png" width="319" height="172")
+
+Don't worry if you don't remember *every&shy;thing* from the tutorial. For now
+there's no need to remember all the cursor move&shy;ment keybindings; the arrow
+keys will do. If you forget the keys for visiting (opening) or saving a file,
+the File menu will remind you. Instead of remembering `C-x 1` to remove other
+windows from the frame, you can use the mouse (hover over the right-hand side
+of the window's modeline and read the help text in the echo area). I will ask
+you to re-read the entire tutorial in a month or so, to fill in the gaps; in
+the meantime, try to learn the keybindings instead of relying on the menus and
+the mouse.
+
+.window<
+  &nbsp;
+.modeline<
+  :preserve
+    -U:---  <b>*scratch*</b>      All L1     (Lisp Interaction)-----------------------------------------------
+  %img.mouse(src="images/mouse.png")
+.echoarea<
+  mouse-1: Select (drag to resize), mouse-2: Make current window occupy the whole frame, mouse-3: Remove current window from display
+
+If you're on a Mac running OS X, you're in luck: Since you have separate Meta
+(alt/option), Control, and Command (⌘) keys on your keyboard, the latter is
+reserved for the standard OS keybindings. You can save with ⌘-s, copy with ⌘-c,
+paste with ⌘-v, and search with ⌘-f. Still, you should eventually learn the
+Emacs alternatives for all of the above, as they are much more powerful. In
+Emacs-speak the ⌘ key is called "super", abbreviated to a lower-case "s", as in
+`s-f`.
+
+If you're not on a Mac, resist the temptation to enable cua-mode. cua-mode
+rebinds keys like `C-z`, `C-x`, `C-c`, and `C-v` to their standard Windows
+meanings. cua-mode also changes the behavior of the region, so that using
+shift-arrow keys highlights text, and typing text replaces the active
+selection, as you'd expect in most other text editors. Get used to the Emacs
+way of doing these things.

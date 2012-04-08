@@ -1,0 +1,593 @@
+%h1 cc-mode customization
+
+I should probably lead you through the relevant parts of the [Emacs](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html), [Emacs
+Lisp]( http://www.gnu.org/software/emacs/manual/html_node/elisp/index.html),
+and [CC Mode](
+http://www.gnu.org/software/emacs/manual/html_node/ccmode/index.html) manuals,
+but they're just. so. *long*! The mere table of contents for the Emacs manual
+is longer than our previous "Unix/C workflow" chapter.[[1]]
+
+Instead I'll show you how I try to find the information I need from the Emacs
+source code (most of which, thankfully, is in Lisp rather than C). The manuals
+I dissed a moment ago *are* incredibly useful. It is cause for wonder that an
+open-source project has produced such comprehensive documentation! But it is
+*impossible* to read those manuals cover-to-cover; you must learn how to
+efficiently find the right information. We've already covered the basic tools
+for that, and now we will exercise them a lot more.
+
+By the way, `c-mode`, `c++-mode`, `objc-mode`, `java-mode`, and a few others
+are all aliases for `cc-mode`, but with slight configuration changes to support
+the respective languages. From here on I'll use the name `cc-mode`.
+
+
+%h2#style House coding style
+
+Are you supposed to indent with 2, 3, 4 or 8 spaces, or with tabs? How big is
+a tab? Whatever you want, I'm going to assume it's *not* the indentation that
+cc-mode provides by default, so that we can walk through the procedure for
+changing it.
+
+.do
+  Visit (open) a C or C++ file (you can use `readline/examples/rl.c` from the
+  previous chapter).
+
+Pressing `TAB` anywhere on a line indents it to the appropriate position
+according to the current indentation rules (to insert a literal tab, use
+`C-q`, a.k.a. `quoted-insert`).
+
+Let's find out what Emacs does behind the scenes when we press `TAB`:
+
+.do
+  `C-h k TAB`
+
+.window<
+  :preserve
+    TAB runs the command c-indent-line-or-region,
+    which is an interactive compiled Lisp function in `<span class="button">cc-cmds.el</span>'.
+    &nbsp;
+.modeline<
+  :preserve
+    -U:%%-  <b>*Help*</b>         Top L1     (Help View)-----------------------------------------------
+.echoarea<
+  Type C-x 1 to delete the help window.
+
+If you don't see the link to `cc-cmds.el`, then you don't have the elisp
+sources installed. Use your system's package manager to install the `emacs-el`
+package and try again.
+
+.do
+  Follow the link to `cc-cmds.el`. This will position you right where
+  `c-indent-line-or-region` is defined. Bring the whole definition into view
+  (`C-M-l`) if necessary.
+
+.window.default<
+  :preserve
+    (<span class="keyword">defun</span> <span class="function-name">c-indent-line-or-region</span> (<span class="type">&amp;optional</span> arg region)
+      <span class="doc">"Indent active region, current line, or block starting on this line.
+    In Transient Mark mode, when the region is active, reindent the region.
+    Otherwise, with a prefix argument, rigidly reindent the expression
+    starting on the current line.
+    Otherwise reindent just the current line."</span>
+      (interactive
+       (list current-prefix-arg (use-region-p)))
+      (<span class="keyword">if</span> region
+          (c-indent-region (region-beginning) (region-end))
+        (c-indent-command arg)))
+
+
+%h2#elisp Emergency elisp
+
+A brief parenthesis is needed to explain the above code. Let's start with the
+`if` statement at the end:
+
+.window.default<
+  :preserve
+      <span class="region">(<span class="keyword">if</span> region
+          (c-indent-region (region-beginning) (region-end))
+        (c-indent-command arg))</span>)
+
+For clarity, let's simplify it to:
+
+.window.default<
+  :preserve
+      (<span class="keyword">if</span> region
+          a
+        b)
+
+If you still don't understand what that means, pretend that `if` is actually a
+function, and that it looks like this:
+
+.window.default<
+  :preserve
+      <span class="keyword">if</span>(region, a, b)
+
+(Moving that parenthesis to the *left* of the function is probably the largest
+single barrier to Lisp's adoption by the rest of the world.)[[2]]
+
+.do
+  What do the three arguments `region`, `a` and `b` mean? Make a guess, and
+  then check the answer at `C-h f if`.
+
+The definitions of *`COND`*, *`THEN`* and *`ELSE`* should be pretty clear. But
+what does it mean by "`if` is a special form"?
+
+It turns out that `if` isn't a regular function. The elisp rule for evaluation
+of "normal" forms—where "form" means a parenthesized "shape" like `(a b c)` or
+`(a b (c d))`—is to evaluate each argument, and then pass the resulting values
+to the function.
+
+Let's consider the function `+` (elisp doesn't have special infix operators, so
+`+` is just a function). If `x` is a variable containing the value `5`, and `y`
+is a variable containing the value `2`, then the following two expressions are
+identical:
+
+.window.default<
+  :preserve
+      (+ x y)
+      (+ 5 2)
+
+The function `+` never sees `x`; it only sees `5`.
+
+.do
+  Evaluate the form `(+ 5 2)`: Switch to the `*scratch*` buffer, type `(+ 5 2)`
+  on a line of its own, and press `C-M-x` to evaluate the form and display the
+  result in the echo area.
+
+The very first element in the form (`+`, in this case) gets evaluated too. `+`
+is actually a variable[[3]] whose value is the function that adds numbers.
+
+Anyway, back to `if`. `if` is a "special" form, which means that the elisp
+interpreter treats `if` as a special case. Upon reflection, it is obvious that
+the normal function evaluation rules are not suitable for `if`: We wouldn't
+want to evaluate *`ELSE`*, with its possible side-effects, when *`COND`* is
+"true" (non-nil).
+
+All this is explained in the Emacs Lisp manual:
+
+.do
+  `C-h S if`
+  -#
+  In the `*info*` buffer press `i` (for `i`ndex) and enter `special forms`.
+
+.do
+  Go back to the `cc-cmds.el.gz` buffer.
+  -#
+  Enable the `eldoc` minor mode (`M-x eldoc-mode`). Now positioning the point
+  over the `if` statement will show some brief documentation in the echo area.
+  -#
+  Enable `show-paren-mode` too. This should help clarify where the *`THEN`* and
+  *`ELSE`* clauses begin and end.
+
+Now, back up to the `defun`:
+
+.window.default<
+  :preserve
+    (<span class="keyword">defun</span> <span class="function-name">c-indent-line-or-region</span> (<span class="type">&amp;optional</span> arg region)
+      <span class="doc">"Indent active region, current line, or block starting on this line.
+    In Transient Mark mode, when the region is active, reindent the region.
+    Otherwise, with a prefix argument, rigidly reindent the expression
+    starting on the current line.
+    Otherwise reindent just the current line."</span>
+      (interactive
+       (list current-prefix-arg (use-region-p)))
+      (<span class="keyword">if</span> region
+          (c-indent-region (region-beginning) (region-end))
+        (c-indent-command arg)))
+
+.do
+  You now have three ways to get help on `defun`: `eldoc`'s summary in the echo
+  area, the reference provided by `C-h f`, and the more comprehensive Info
+  manual at `C-h S`. Take your pick.
+
+If you run across the word "lambda", it's the same as the "function" keyword
+in javascript for an anonymous function.
+
+To reiterate:
+
+* `defun` defines a function named *`NAME`*.
+* *`ARGLIST`* is a list of arguments for the function. In elisp, a list is
+enclosed in parens: `(a b c)`. In this case it isn't evaluated as a function
+call, because `defun` is a special form that treats this particular list in a
+special way. When `defun`ing a function that takes no arguments, *`ARGLIST`*
+would be the empty list `()`.
+* The optional *`DOCSTRING`* is used by the `C-h f` help system (yes, even for
+functions you define yourself!).
+* *`BODY`* is one or more lists that are evaluated when you *call* the
+function.
+* ...except for the `(interactive ...)` form.
+
+.do
+  `C-h S interactive`
+
+Don't get too bogged-down by the explanation; reading the first two paragrahs
+is enough. Learn to find *just* the information you need, or you will be easily
+overwhelmed. Right now we don't need to know how to *use* `interactive`, only
+what it *means*.
+
+
+%h2#indentation Configuring indentation
+
+So. `c-indent-line-or-region` is a function that optionally takes arguments
+`arg` and `region`, which, when the function is called interactively (for
+example by pressing `TAB`), are set to the prefix argument (if specified with
+`C-u` or similar) and "true" if the region is active.
+
+Right now we care about indentation when operating not on the region but on a
+single line (i.e. `region` is `nil`), so let's look at the *`ELSE`* clause:
+
+.window.default<
+  :preserve
+      (<span class="keyword">if</span> region
+          (c-indent-region (region-beginning) (region-end))
+        <span class="region">(c-indent-command arg)</span>)
+
+.do
+  Use `find-function` to jump to the definition of `c-indent-command`.
+
+This is a long and scary function, but luckily it has a good documentation
+string. Now that we know the name of this function, we can view the same
+documentation in a help buffer, with `C-h f c-indent-command`.
+
+The documentation mentions a couple of interesting variables: `c-basic-offset`
+and `indent-tabs-mode`.
+
+.do
+  `C-h v c-basic-offset`
+
+That talks about "buffer-local" and "file local" variables. What?
+
+.do
+  `C-h S buffer-local`
+
+.do
+  From the elisp Info node for Buffer-Local Variables, search for "file local"
+  (you can use `C-s` or the index `i`).
+
+As you can see you sometimes have to try different searches to find the right
+information. "Buffer-local" happened to be in the index, so the symbol search
+(`C-h S`) found it; "File local" has a space, but the symbol search doesn't
+allow spaces, so you had to search from within the Info buffer itself. You
+could also have gone up (`u`) from the "Buffer-Local Variables" Info node and
+scanned the "Variables" table of contents.
+
+Let's check the current value of `c-basic-offset`:
+
+.do
+  Switch to buffer `rl.c` (`c-basic-offset` is buffer-local, so it matters
+  which buffer we're in).
+
+  `M-x eval-expression RET c-basic-offset RET`
+
+Now change it to 4:
+
+.do
+  `M-x set-variable c-basic-offset 4`
+  -#
+  Find a line to re-indent and press `TAB`.
+
+.do
+  Repeat the same investigation with variable `indent-tabs-mode`.
+
+
+%h2#setq Setting variables from elisp code
+
+.do
+  Switch to the `*scratch*` buffer.
+
+Anything starting with a `;` is a comment.
+
+.do
+  Type in this form and evaluate it with `C-M-x`:
+  -#
+  `(set indent-tabs-mode nil)`
+
+You triggered an error, and Emacs brings up the backtrace in an elisp debugger.
+You tried to set a constant to `nil`, which is clearly an error.
+
+.do
+  Explain why this happened, with your knowledge of the previous value of
+  `indent-tabs-mode` and of the elisp rules for evaluating functions.
+
+We can *quote* the name of the variable so that it doesn't get evaluated:
+
+.do
+  `(set 'indent-tabs-mode nil)`
+
+Read more about quoting:
+
+.do
+  `C-h S quote`
+  -#
+  `C-h S setq`
+
+The following forms do exactly the same; the preferred form is `setq`.
+-#
+.window.default<
+  :preserve
+    (set 'indent-tabs-mode nil)
+    (set (quote indent-tabs-mode) nil)
+    (setq indent-tabs-mode nil)
+
+One last thing: `indent-tabs-mode` is buffer-local, so setting it here only
+affects the `*scratch*` buffer. To make the change global, you must use
+`setq-default`.
+
+
+%h2#init Init file
+
+Your changes to these variables will be lost when you restart Emacs. You need
+to put your settings into an initialization file that Emacs will load each time
+it starts.
+
+.do
+  In the Emacs manual (`C-h r`) table of contents, search for "init file" and
+  read the first paragraph.
+
+There are several places you can put your init file; I suggest the one that
+goes inside the `~/.emacs.d` directory, so you can organize your customizations
+by keeping multiple elisp files in the same directory, and loading them from
+the main init file. Put this directory under version control.
+
+.do
+  Visit (open) the init file you've chosen (if the file doesn't exist, Emacs
+  will create it when you save the buffer).
+
+.do
+  Add the following lines:
+  -#
+  `(setq-default c-basic-offset 4)`  
+  `(setq-default indent-tabs-mode nil)`
+
+(or whatever values you have chosen).
+
+.do
+  Restart Emacs, visit `rl.c`, and verify that your settings are in effect.
+
+
+%h2#hooks Hooks
+
+By default, `cc-mode` automatically re-indents the line whenever you type a
+character like `;` or `}`. These are called ["electric characters"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Electric-C.html) and
+you can disable this behavior in a particular buffer with
+`c-toggle-electric-state` (`C-c C-l`).
+
+To always disable electric characters we can have Emacs call
+`c-toggle-electric-state` each time it loads `cc-mode`.
+
+.do
+  `C-h m` (from the `rl.c` buffer, or any other `cc-mode` buffer) to find out
+  the names of the hooks provided by `cc-mode`.
+
+A [hook]( http://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html)
+is a variable containing a list of functions to be run, usually upon entry to a
+particular editing mode. For C code we have two hooks: One for all of
+`cc-mode`'s supported languages, and one just for C. We'll use the first one,
+`c-mode-common-hook`.
+
+.do
+  Add the following to your init file:
+  -#
+  .window.default<
+    :preserve
+      (<span class="keyword">defun</span> <span class="function-name">my-disable-electric-indentation</span> ()
+        <span class="doc">"Stop ';', '}', etc. from re-indenting the current line."</span>
+        (c-toggle-electric-state -1))
+      (add-hook 'c-mode-common-hook 'my-disable-electric-indentation)
+
+First we defined a function that takes no arguments and calls
+`(c-toggle-electric-state -1)`. Then we added the function to the
+`c-mode-common-hook`.
+
+The `-1` argument tells `c-toggle-electric-state` to disable, rather than
+toggle, the electric behavior (I learned this from `C-h f
+c-toggle-electric-state`; some functions might want `nil`, but this one wanted
+a negative number).
+
+You could add an anonymous function to a hook directly:
+
+.window.default<
+  :preserve
+    (add-hook 'c-mode-common-hook
+              (<span class="keyword">lambda</span> () (c-toggle-electric-state -1)))
+
+but then you have no way of referring to the function by name, so you can't
+remove it from the hook with `remove-hook`.
+
+
+%h2#style-system The cc-mode style system
+
+There is more to coding style than the size of indentation. Where should
+opening braces go? Should they be indented too?
+
+The `C-h v` documentation for `c-basic-offset` mentioned a "style system", and
+referred us to `c-default-style`.
+
+.do
+  `C-h v c-default-style`
+
+.window.default<
+  :preserve
+    c-default-style is a variable defined in `<span class="button">cc-vars.el</span>'.
+    Its value is ((java-mode . "java")
+     (awk-mode . "awk")
+     (other . "gnu"))
+
+Elisp syntax for a list is `(a b c)`, and for a pair is `(a . b)`. Pairs are
+called "cons cells" in lisp terminology, and you access the first element with
+the function `car`, the second with the function `cdr` (pronounced
+"could-er").
+
+So the value of `c-default-style` is a list containing 3 pairs; it's used as a
+lookup dictionary where `java-mode`, `awk-mode` and `other` are the keys, and
+`"java"`, `"awk"` and `"gnu"` are the values (in this case, names of styles to
+use for each of the editing modes represented by the keys). These lookup
+dictionaries are called "alists".
+
+.do
+  `C-h S alist`
+
+In your init file you could set `c-default-style` so that the default style for
+`other`[[4]] is something other than `"gnu"`.
+
+If you need to customize anything (including `c-basic-offset` and
+`indent-tabs-mode`) to something different than any of the built-in styles, I
+recommend you define your own style: Thus if you work on different projects
+with different styles, you will be able to switch easily (with `c-set-style`).
+The way we set `c-basic-offset` earlier will [automatically create a style
+called "user"](
+http://www.gnu.org/software/emacs/manual/html_node/ccmode/Built_002din-Styles.html#index-User-style-294).
+
+For help see ["Configuration basics"](
+http://www.gnu.org/software/emacs/manual/html_node/ccmode/Config-Basics.html),
+["Customizing indentation"](
+http://www.gnu.org/software/emacs/manual/html_node/ccmode/Customizing-Indentation.html),
+and ["Sample .emacs file"](
+http://www.gnu.org/software/emacs/manual/html_node/ccmode/Sample-_002eemacs-File.html)
+in the CC Mode Manual.
+
+
+%h2#keys Binding keys
+
+I often come across source code where one file expects tabs to equal 8 spaces,
+and another file in the same directory—or even other lines within the same
+file—want a tab to be 4 spaces. Let's create a function that cycles
+`tab-width` between 2, 4 and 8 spaces.
+
+(I found the variable `tab-width` by using `apropos-variable` to search for
+"tab".)
+
+.do
+  .window.default<
+    :preserve
+      (<span class="keyword">defun</span> <span class="function-name">my-tab-width</span> ()
+        <span class="doc">"Cycle tab-width between values 2, 4, and 8."</span>
+        (interactive)
+        (setq tab-width
+              (<span class="keyword">cond</span> ((eq tab-width 8) 2)
+                    ((eq tab-width 2) 4)
+                    (t 8)))
+        (redraw-display))
+
+The `cond` expression evaluates to 2 if `tab-width` equals 8; to 4 if
+`tab-width` equals 2; and to 8 otherwise. Look up `cond` and `eq` in the Info
+manuals if you like.
+
+I've been naming all my functions "*my*-something" because elisp doesn't have
+separate namespaces for each mode or package; this way I can be sure my
+functions won't accidentally re-define an existing function that some editing
+mode relies on.
+
+Now let's bind our new function to a key sequence, so we can invoke it
+conveniently. `C-c` followed by a letter is [reserved for users to define](
+http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html),
+so we'll use `C-c t`:
+
+.do
+  .window.default<
+    :preserve
+      (global-set-key (kbd <span class="string">"C-c t"</span>) 'my-tab-width)
+      
+
+The meaning of "global" in `global-set-key` should be obvious. If you'd like a
+keybinding just for `cc-mode`, use `define-key` to add the binding to the
+mode's keymap:
+
+.window.default<
+  :preserve
+    (define-key c-mode-base-map (kbd <span class="string">"C-c t"</span>) 'my-tab-width)
+
+I discovered `c-mode-base-map` with `C-h v c-mode- TAB TAB`. There is also a
+`c-mode-map` which is just for the C language, rather than all languages
+supported by `cc-mode`.
+
+
+%h2#auto-mode Associating file extensions with an editing mode
+
+Say you want `.h` files to open in `c++-mode` rather than `c-mode`:
+
+.do
+  `C-h v auto-mode-alist`
+  -#
+  `C-h f add-to-list`
+
+.figure
+  .window.default<
+    :preserve
+      (add-to-list 'auto-mode-alist
+                   '(<span class="string">"\\.h$"</span> . c++-mode))
+  .modeline<
+    :preserve
+      -U:---  <b>*scratch*</b>      All L6      (Lisp Interaction)----------------------------------------
+  .echoarea<
+    <span class="prompt">Regexp I-search:</span> \\.h$
+
+The trickiest part will be getting the regular expression right—elisp doesn't
+have syntax for a regexp literal, so you have to put it inside a string, and
+then the string backslash-escaping makes the regexp rather awful. See
+["Regexps"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Regexps.html) in the
+Emacs manual.
+
+
+%h2#homework Homework
+
+If you have a spare 30 minutes read Steve Yegge's [Emergency Elisp](
+http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html).
+
+If you have a spare 6 months work through [Structure and Interpretation of
+Computer Programs]( http://mitpress.mit.edu/sicp/), a famous textbook from MIT
+that teaches important (and some quite advanced) programming concepts and
+techniques using a simple dialect of Lisp called Scheme. If you like "mathy"
+things like the [Sieve of Eratosthenes](
+http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) for finding prime numbers,
+[Heron's method](
+http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method)
+for calculating square roots, or estimating the value of pi using [Monte Carlo
+simulation]( http://en.wikipedia.org/wiki/Monte_Carlo_method), then you'll love
+this book.
+
+If you had a collection of `.emacs` customizations collected from the web
+before you started this guide to Emacs, go over them now and try to understand
+them thoroughly.
+
+In future, when you need a particular customization try to find the solution
+from the manuals or the elisp sources before reaching for Google.
+
+Don't try to modify the elisp files that are part of the Emacs distribution.
+For one, it won't be easy to merge your changes when you update Emacs to a
+newer version. Second, the files are byte-compiled so you'd have to recompile
+them. Third, even if you did it still wouldn't help because the core elisp
+functions are [built into the Emacs image](
+http://www.gnu.org/software/emacs/manual/html_node/elisp/Building-Emacs.html),
+so you'd have to recompile the whole program. Instead, use the variables and
+hooks provided for customization.
+
+Don't pay attention to the Emacs manual whenever it tells you to use the ["Easy
+customization"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html)
+facility (in some help buffers it will say "you can customize this variable").
+It's referring to a really awkward semi-graphical interface for setting Emacs
+variables. Best to keep all your customizations in your own init file.
+
+
+#footnotes
+  [[1]]:
+  Try this:  
+  `lynx --dump http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html |`  
+  `sed '/^References/,$ d' | wc -w`
+
+  [[2]]:
+  I *am* joking. Lisp does have plenty of real problems.
+
+  [[3]]:
+  Actually a "symbol". Curiously, elisp functions and variables live in
+  separate namespaces, so you can define the variable `+`, set it to `2`, and
+  still use `+` as a function in nonsensical statements like `(+ 1 +)`. Try it:  
+  `(setq + 2)`  
+  `(+ 1 +)`
+
+  [[4]]:
+  "Other" here only refers to languages supported by `cc-mode`, not *any* other
+  language.

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: The very basics
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li class='current'>4. The very basics</li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>The very basics</h1>
+<div class='do' id='first-key-sequence'>
+  <p>Work through the Emacs tutorial: Start Emacs and press <code><a class='glossary' href='glossary.html#keys'>C-h t</a></code>.</p>
+</div>
+<p>If the tutorial seems a bit tedious, soldier on. It will only take you 30
+minutes, at most; and the material is essential for understanding Emacs. Most
+of the cursor movement and text manipulation keybindings you&rsquo;ll learn will also
+work in the bash shell (or any program that uses the readline library) and, if
+you use OS X, even in the text fields of any native GUI application.</p>
+
+<p>Do not proceed to the next chapter of this guide until you have read the entire
+tutorial, and you are comfortable with:</p>
+
+<table>
+<tr><td>Visiting (opening) and saving files:</td><td><code><a class='glossary' href='glossary.html#keys'>C-x C-f</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-x C-s</a></code>            </td></tr>
+<tr><td>Switching between <a class='glossary' href='glossary.html#buffers'>buffers</a>:          </td><td><code><a class='glossary' href='glossary.html#keys'>C-x b</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-x C-b</a></code>              </td></tr>
+<tr><td>Using <a class='glossary' href='glossary.html#region'>the mark</a> and <a class='glossary' href='glossary.html#region'>the point</a><br />
+to set <a class='glossary' href='glossary.html#region'>the region</a>:                </td><td><code><a class='glossary' href='glossary.html#keys'>C-SPC</a></code>                            </td></tr>
+<tr><td>Killing (cutting) and
+<a class='glossary' href='glossary.html#killing'>yanking</a> (pasting):                </td><td><code><a class='glossary' href='glossary.html#keys'>C-w</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-k</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-y</a></code>, <code><a class='glossary' href='glossary.html#keys'>M-y</a></code>         </td></tr>
+<tr><td>Searching forwards and backwards:   </td><td><code><a class='glossary' href='glossary.html#keys'>C-s</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-r</a></code>                       </td></tr>
+<tr><td>Invoking commands by name:          </td><td><code><a class='glossary' href='glossary.html#keys'>M-x</a></code>                              </td></tr>
+<tr><td>Undo:                               </td><td><code><a class='glossary' href='glossary.html#keys'>C-/</a></code>                              </td></tr>
+<tr><td>Cancelling half-entered commands:   </td><td><code><a class='glossary' href='glossary.html#keys'>C-g</a></code>                              </td></tr>
+<tr><td>Getting help on <a class='glossary' href='glossary.html#majormode'>editing modes</a>,<br />
+keybindings and commands:         </td><td><br />
+<code><a class='glossary' href='glossary.html#keys'>C-h m</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-h k</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-h f</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-h a</a></code><br />
+(just remember <code><a class='glossary' href='glossary.html#keys'>C-h</a></code> and read<br />
+the prompt in the <a class='glossary' href='glossary.html#minibuffer'>minibuffer</a>)    </td></tr>
+<tr><td>Quitting Emacs:                     </td><td><code><a class='glossary' href='glossary.html#keys'>C-x C-c</a></code>                          </td></tr>
+</table>
+<div class='figure first'>
+  <img height='172' src='images/filemenu.png' width='319'>
+</div>
+<p>Don&rsquo;t worry if you don&rsquo;t remember <em>every&shy;thing</em> from the tutorial. For now
+there&rsquo;s no need to remember all the cursor move&shy;ment keybindings; the arrow
+keys will do. If you forget the keys for visiting (opening) or saving a file,
+the File menu will remind you. Instead of remembering <code><a class='glossary' href='glossary.html#keys'>C-x 1</a></code> to remove other
+<a class='glossary' href='glossary.html#windows'>windows</a> from the <a class='glossary' href='glossary.html#frames'>frame</a>, you can use the mouse (hover over the right-hand side
+of the <a class='glossary' href='glossary.html#windows'>window</a>&rsquo;s <a class='glossary' href='glossary.html#modeline'>modeline</a> and read the help text in the <a class='glossary' href='glossary.html#echoarea'>echo area</a>). I will ask
+you to re-read the entire tutorial in a month or so, to fill in the gaps; in
+the meantime, try to learn the keybindings instead of relying on the menus and
+the mouse.</p>
+<div class='window'><p>&nbsp;</p></div>
+<div class='modeline'>-U:---  <b>*scratch*</b>      All L1     (Lisp Interaction)-----------------------------------------------
+<img class='mouse' src='images/mouse.png'></div>
+<div class='echoarea'><p>mouse-1: Select (drag to resize), mouse-2: Make current <a class='glossary' href='glossary.html#windows'>window</a> occupy the whole <a class='glossary' href='glossary.html#frames'>frame</a>, mouse-3: Remove current <a class='glossary' href='glossary.html#windows'>window</a> from display</p></div>
+<p>If you&rsquo;re on a Mac running OS X, you&rsquo;re in luck: Since you have separate Meta
+(alt/option), Control, and Command (⌘) keys on your keyboard, the latter is
+reserved for the standard OS keybindings. You can save with ⌘-s, copy with ⌘-c,
+paste with ⌘-v, and search with ⌘-f. Still, you should eventually learn the
+Emacs alternatives for all of the above, as they are much more powerful. In
+Emacs-speak the ⌘ key is called &ldquo;super&rdquo;, abbreviated to a lower-case &ldquo;s&rdquo;, as in
+<code><a class='glossary' href='glossary.html#keys'>s-f</a></code>.</p>
+
+<p>If you&rsquo;re not on a Mac, resist the temptation to enable cua-mode. cua-mode
+rebinds keys like <code><a class='glossary' href='glossary.html#keys'>C-z</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-x</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-c</a></code>, and <code><a class='glossary' href='glossary.html#keys'>C-v</a></code> to their standard Windows
+meanings. cua-mode also changes the behavior of <a class='glossary' href='glossary.html#region'>the region</a>, so that using
+shift-arrow keys highlights text, and typing text replaces the active
+selection, as you&rsquo;d expect in most other text editors. Get used to the Emacs
+way of doing these things.</p>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='basic_c.html'>Next: Basic Unix/C workflow</a></p>
+    </div>
+  </body>
+</html>

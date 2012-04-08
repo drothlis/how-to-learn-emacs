@@ -1,0 +1,109 @@
+%h1 Glossary
+
+%dl
+  %dt#keys Emacs key names:
+  %dd
+    | `C-x`      | means Control-x.                                          |
+    | `C-x C-s`  | means Control-x, then Control-s.                          |
+    | `C-x k`    | means Control-x, then k on its own (without Control).     |
+    | `M-x`      | means Alt-x (Alt is called Option on some Mac keyboards).  
+    |             The `M` stands for “Meta” which is presumably what the Alt
+    |             key was called in the 70s.                                 |
+    | `M-x help` | means press Alt-x, then type `help`, then press return.   |
+    | `C-M-x`    | means Control-Alt-x                                       |
+    | `S-x`      | means Shift-x                                             |
+    | `s-x`      | means Command-x (the ⌘ Command key on Mac keyboards).  
+    |              The `s` stands for “Super”, from the days when keyboards
+    |              had Meta, Super, and Hyper keys.                          |
+    | `&lt;RET&gt;` | means the Return or Enter key.                         |
+    | `&lt;SPC&gt;` | means the Space bar.                                   |
+    | `&lt;DEL&gt;` | means Backspace  
+    |              (not to be confused with the delete-forward key)          |
+
+  %dt#frames Frames:
+  %dd
+    .figure#glossary-frames
+      .titlebar<
+        rl.c
+      .window.default<
+        :preserve
+          <span class="type">int</span>
+          <span class="function-name">main</span> (argc, argv)
+               <span class="type">int</span> <span class="variable-name">argc</span>;
+               <span class="type">char</span> **<span class="variable-name">argv</span>;
+          {<span class="cursor">&nbsp;</span>
+      .modeline<
+        :preserve
+          --:---  <b>rl.c</b>          59% L83   Git-master  (C/l Abbrev)-----------------------------------
+      .window.default<
+        :preserve
+          make -k
+          rm -f rl.o
+          gcc -DHAVE_CONFIG_H -DREADLINE_LIBRARY -DRL_LIBRARY_VERSION='"6.2"'  -I. -I.. -I.. -g -O -c rl.c
+          <span class="function-name">rl.c</span>: In function &#8216;main&#8217;:
+      .modeline<
+        :preserve
+          -U:%*-  <b>*compilation*</b>   Top L1     (Compilation<span class="error">:exit [2]</span>)-----------------------------------
+      .echoarea<
+        Compilation exited abnormally with code 2
+      %p One frame, two windows<br />(each with its own modeline)
+    
+
+    What Emacs calls your window-manager's windows. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Frames.html)
+
+  %dt#windows Windows:
+  %dd
+    Subdivisions inside a Frame. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Windows.html)
+
+  %dt#buffers Buffers:
+  %dd
+    The text you are editing. The difference between a buffer and a file is
+    that their contents may differ until you save your changes; and some
+    buffers aren't backed by files at all (e.g. a `*compilation*` or `*Help*`
+    buffer). [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Buffers.html)
+
+  %dt#modeline Mode line:
+  %dd
+    Describes the buffer in the window above the modeline. Hover your mouse
+    over each indicator in the modeline for a description. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Mode-Line.html)
+
+  %dt#echoarea Echo area:
+  %dd
+    The line at the very bottom of the frame, used to display small informative
+    messages. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Echo-Area.html)
+
+  %dt#minibuffer Minibuffer:
+  %dd
+    The echo area when it is prompting for user input. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Minibuffer.html)
+
+  %dt#region The point, the mark and the region:
+  %dd
+    The point is where the cursor is. Set the mark with `C-<SPC>`, move the
+    point, and now the region is the area between point and mark. [[Emacs
+    manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Mark.html)
+
+  %dt#killing Killing and yanking:
+  %dd
+    Killing = cutting. Yanking = pasting (sorry vi users!). [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Killing.html)
+
+  %dt#majormode Major mode or Editing mode:
+  %dd
+    A major mode is a customization of Emacs for editing text of a particular
+    sort (e.g. a particular programming language). A buffer can only have one
+    major mode active at a time. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Major-Modes.html)
+
+  %dt#minormode Minor mode:
+  %dd
+    Multiple minor modes can be enabled at once; they add functionality ranging
+    from syntax highlighting to automatic spell-checking to modifying the
+    behavior of common Emacs commands. [[Emacs manual]](
+    http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html)

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Replaces "<!-- Title -->" on stdin with the actual title on stdout;
+# takes the actual title from the <h1>...</h1> contents of the filename in $1.
+
+title=$(sed -n 's,%h1 \(.*\),\1,p' $1)
+sed -e "s,<!-- Title -->,How to learn Emacs :: $title,"

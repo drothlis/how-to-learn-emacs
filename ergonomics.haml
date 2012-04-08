@@ -1,0 +1,57 @@
+%h1 Ergonomics
+
+Most of the following advice relies heavily on the Control key, so bind your
+Caps Lock to Control. This is easy to do on [OS X](osx.html) and Linux, and on
+Windows involves [changing a registry entry](
+http://sites.google.com/site/steveyegge2/effective-emacs#item1).
+
+You may choose to swap the left Control key with Caps Lock, or just to make
+them both Control keys — in Emacs and bash you can uppercase a word with `M-u`
+(upcase-word) and the region with `C-x C-u` (upcase-region).
+
+Now you will find the navigation keys like `C-f`, `C-b`, `C-n` and `C-p` much
+closer to your home row position than the arrow keys. Learn to navigate in
+larger jumps with `C-a` and `C-e` (beggining and end of line), `M-f` and `M-b`
+(forward and back by one word), `C-M-f` and `C-M-b` (forward and back by one
+block of parentheses or braces), and `M-a` and `M-e` (beginning and end of a
+sentence or expression).
+
+If you need to move to a far-away position it is often faster to get there by
+searching with `C-s`.
+
+For fixing typos, `C-t` (transpose-chars) comes in handy.
+
+Instead of reaching for the backspace key, consider rebinding `C-h` to
+backspace (as in most shells), and `C-w` to backward-kill-word (also as in most
+shells; in Emacs it is normally bound to `C-backspace`). `C-d` deletes the
+*next* character, and you don't even need to bind it yourself.
+
+Rebinding `C-h` is a bit tricky, because after making your binding you might
+activate some major or minor mode that binds a new sequence beginning with
+`C-h`, undoing your own binding. You can use `key-translation-map` to make
+`C-h` appear to Emacs as the backspace key, ignoring all other `C-h` bindings
+now or in future:
+
+.window<
+  :preserve
+    (define-key key-translation-map (kbd <span class="string">"C-h"</span>) (kbd <span class="string">"<a class="glossary" href="glossary.html#keys">&lt;DEL&gt;</a>"</span>))
+
+You will still be able to access the help commands with `F1 f`, `F1 v`, `F1 S`,
+etc.
+
+As for `C-w`, you could define your own function that keeps the default
+behavior when the region is active, and does `backward-kill-word` when not:
+
+.window<
+  :preserve
+    (<span class="keyword">defun</span> <span class="function-name">kill-region-or-backward-kill-word</span> (<span class="type">&amp;optional</span> arg region)
+      <span class="doc">"`</span><span class="doc"><span class="constant">kill-region</span></span><span class="doc">' if the region is active, otherwise `</span><span class="doc"><span class="constant">backward-kill-word</span></span><span class="doc">'"</span>
+      (interactive
+       (list (prefix-numeric-value current-prefix-arg) (use-region-p)))
+      (<span class="keyword">if</span> region
+          (kill-region (region-beginning) (region-end))
+        (backward-kill-word arg)))
+    (global-set-key (kbd <span class="string">"C-w"</span>) 'kill-region-or-backward-kill-word)
+
+Some of these tips were inspired by Steve Yegge's [Effective Emacs](
+http://sites.google.com/site/steveyegge2/effective-emacs) article. Read it.

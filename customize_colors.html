@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Fix that awful color scheme
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li class='current'>7. Fix that awful color scheme
+    <ul>
+      <li><a href="#default">Default font</a></li>
+      <li><a href="#colours">Syntax highlighting colours</a></li>
+      <li><a href="#diff">diff-mode</a></li>
+      <li><a href="#themes">Color themes</a></li>
+      <li><a href="#packages">Installing third-party elisp packages</a></li>
+      <li><a href="#github">Installing packages from github</a></li>
+      <li><a href="#size">Increasing the font size</a></li>
+      <li><a href="#variable-pitch">variable-pitch-mode</a></li>
+    </ul>
+  </li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Fix that awful color scheme</h1>
+<p>The default Emacs color scheme is affectionately known as &ldquo;angry fruit salad&rdquo;.</p>
+<h2 id='default'>Default font</h2>
+<p><a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Fonts.html">&ldquo;Fonts&rdquo; in the Emacs manual</a><a id='fnref1' href='#fn1' class='footnote'>[1]</a> says:</p>
+<div class='do'>
+  <p>Click on &lsquo;Set Default Font&rsquo; in the &lsquo;Options&rsquo; menu. To save this for future
+  sessions, click on &lsquo;Save Options&rsquo; in the &lsquo;Options&rsquo; menu.<a id='fnref2' href='#fn2' class='footnote'>[2]</a></p>
+</div>
+<p>&ldquo;DejaVu Sans Mono&rdquo; is a good choice (also known as &ldquo;Bitstream Vera Sans Mono&rdquo;,
+or &ldquo;Menlo&rdquo; on OS X 10.6+). Do choose a fixed-width font, even if you like
+proportional fonts for programming. We&rsquo;ll cover Emacs&rsquo;s handling of
+proportional fonts later.</p>
+
+<p>The &ldquo;Save Options&rdquo; menu command automatically modified your init file with the
+new settings (and told you so in the <a class='glossary' href='glossary.html#echoarea'>echo area</a>, now in the <code>*Messages*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>
+if you missed it).</p>
+
+<p>There is a <a href="http://debbugs.gnu.org/cgi/bugreport.cgi?bug=2845">known bug</a> on
+OS X that prevents &ldquo;Save Options&rdquo; from saving changes to the default font. OS X
+users will have to use the <code>customize-face</code> mechanism I explain below,
+specifying <code>default</code> as the face name.</p>
+<h2 id='colours'>Syntax highlighting colours</h2>
+<p><a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html">Font Lock mode</a> is the
+<a class='glossary' href='glossary.html#minormode'>minor mode</a> responsible for syntax highlighting. You can read up on font-lock
+mode if you want to figure out how Emacs decides what is a comment or a keyword
+or a variable, or how to add your own keywords.</p>
+
+<p>But to merely change the colours:</p>
+<div class='do'>
+  <p>Figure out the name of the face you want to change: <code>describe-face</code> (defaults
+  to the face at point) or <code>list-faces-display</code>.</p>
+</div>
+<div class='do'>
+  <p><code>modify-face</code> will prompt you for a face and for each attribute to change.
+  Leave attributes as &ldquo;unspecified&rdquo; (the default) to inherit from the default
+  face. When it comes to the foreground and background colours, you can use the
+  predefined colours shown by tab-completion, or you can specify RGB hex values
+  like <code>#3f7f5f</code>.</p>
+</div>
+<div class='do'>
+  <p><code>customize-face</code> brings up the &ldquo;easy customization&rdquo; interface I warned you
+  against in the previous chapter. Click the <code>State</code> button and select <code>Save&#x000A;for Future Sessions</code>. (You can make changes here too, but I prefer
+  <code>modify-face</code> because it gives you tab-completion on the possible values for
+  each attribute.)</p>
+</div>
+<p>Apart from <code>describe-face</code>, which I found in the Help menu, I found all these
+in the Emacs manual under <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Faces.html">&ldquo;Faces&rdquo;</a>,
+<a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Standard-Faces.html">&ldquo;Standard Faces&rdquo;</a>
+and <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Face-Customization.html">&ldquo;Customizing Faces&rdquo;</a>.</p>
+
+<p>Now let&rsquo;s figure out how to bypass the &ldquo;easy customization&rdquo; interface:</p>
+<div class='do'>
+  <p>Visit your init file to see what &ldquo;easy customization&rdquo; added. If you already
+  had the file open, you may need <code>revert-buffer</code> to see the latest changes.</p>
+</div>
+<div class='titlebar'><p>init.el</p></div>
+<div class='window default new-comment-face'>(custom-set-variables&#x000A;  <span class="comment">;; custom-set-variables was added by Custom.&#x000A;  ;; If you edit it by hand, you could mess it up, so be careful.&#x000A;  ;; Your init file should contain only one such instance.&#x000A;  ;; If there is more than one, they won't work right.</span>&#x000A; )&#x000A;(custom-set-faces&#x000A;  <span class="comment">;; custom-set-faces was added by Custom.&#x000A;  ;; If you edit it by hand, you could mess it up, so be careful.&#x000A;  ;; Your init file should contain only one such instance.&#x000A;  ;; If there is more than one, they won't work right.</span>&#x000A; '(default ((t (<span class="builtin">:height</span> 120 <span class="builtin">:family</span> <span class="string">"Menlo"</span>))))&#x000A; '(font-lock-comment-face ((t (<span class="builtin">:foreground</span> <span class="string">"#3f7f5f"</span>)))))&#x000A;&#x000A;</div>
+<p>You could configure the remaining font-lock faces by adding arguments to the
+<code>custom-set-faces</code> form, but they might be overwritten if you use the easy
+customization framework in future. Inspired by the name <code>custom-set-faces</code>, I
+searched for functions beginning with <code>set-face</code> and found
+<code>set-face-attribute</code>:</p>
+<div class='window'>(set-face-attribute 'default nil <span class="builtin">:family</span> <span class="string">"Menlo"</span> <span class="builtin">:height</span> 120)&#x000A;(set-face-attribute 'font-lock-comment-face nil <span class="builtin">:foreground</span> <span class="string">"#3f7f5f"</span>)&#x000A;(set-face-attribute 'font-lock-string-face nil <span class="builtin">:foreground</span> <span class="string">"#4f004f"</span>)&#x000A;(set-face-attribute 'font-lock-constant-face nil <span class="builtin">:foreground</span> <span class="string">"#4f004f"</span>)&#x000A;(set-face-attribute 'font-lock-keyword-face nil <span class="builtin">:foreground</span> <span class="string">"#00003f"</span>)&#x000A;(set-face-attribute 'font-lock-builtin-face nil <span class="builtin">:foreground</span> <span class="string">"#00003f"</span>)&#x000A;(set-face-attribute 'font-lock-type-face nil <span class="builtin">:foreground</span> <span class="string">"#000000"</span>)&#x000A;(set-face-attribute 'font-lock-function-name-face nil&#x000A;                    <span class="builtin">:foreground</span> <span class="string">"#000000"</span> <span class="builtin">:weight</span> 'bold)&#x000A;(set-face-attribute 'font-lock-variable-name-face nil&#x000A;                    <span class="builtin">:foreground</span> <span class="string">"#000000"</span> <span class="builtin">:weight</span> 'bold)&#x000A;</div>
+<p>The above settings produce a very conservative dark-on-white color scheme. I
+like it because in many languages it highlights variable and function
+<em>definitions</em> but not their uses.</p>
+
+<p>For all the face attribute names see <a href="http://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Attributes.html">&ldquo;Face Attributes&rdquo;</a>
+in the Emacs Lisp manual. As to elisp syntax, <a href="http://www.gnu.org/software/emacs/manual/html_node/elisp/Symbol-Type.html">keyword symbols</a> like
+<code>:foreground</code> and <code>:weight</code> are constants (that evaluate to themselves so you
+don&rsquo;t have to quote them).</p>
+<h2 id='diff'>diff-mode</h2>
+<p>While we&rsquo;re on colours, let&rsquo;s add some helpful colouring to <code>diff-mode</code> (which
+we came across earlier, in the section on the <code>vc</code> version control
+interface).<a id='fnref4' href='#fn4' class='footnote'>[4]</a></p>
+<div class='do'>
+  <div class='titlebar'><p>init.el</p></div>
+  <div class='window'>(<span class="keyword">eval-after-load</span> 'diff-mode&#x000A;  '(<span class="keyword">progn</span>&#x000A;     (set-face-foreground 'diff-added <span class="string">"green4"</span>)&#x000A;     (set-face-foreground 'diff-removed <span class="string">"red3"</span>)))&#x000A;</div>
+</div>
+<p><code>eval-after-load</code> does what it says: The first time <code>diff-mode</code> is loaded,
+evaluate the following form. Emacs tends not to load every elisp package on
+startup, but waits until you actually <em>use</em> <code>diff-mode</code> to load it.</p>
+
+<p>If you used <code>(set-face-foreground 'diff-added ...)</code> directly in your init file,
+you would get the error &ldquo;invalid face diff-added&rdquo;. You could explicitly load
+<code>diff-mode</code> (using <code>require</code>) in your init file, but that would increase
+Emacs&rsquo;s startup time—ever so slightly—every time you run Emacs in the
+terminal for a quick job that won&rsquo;t even use <code>diff-mode</code>.</p>
+
+<p><code>eval-after-load</code> takes a single form to evaluate, but we want to make two
+function calls, so we wrap them in <code>progn</code> which merely evaluates a bunch of
+forms sequentially. We quote it so that it doesn&rsquo;t get evaluated right now,
+before even being passed to <code>eval-after-load</code>.</p>
+<div class='figure'>
+  <div class='titlebar'><p>diff-mode.el.gz</p></div>
+  <div class='window'>&nbsp;&#x000A;<span class="comment-delimiter">;; </span><span class="comment">provide the package&#x000A;</span><span class="esk-paren">(</span><span class="keyword">provide</span> '<span class="constant">diff-mode</span><span class="esk-paren">)</span>&#x000A;</div>
+</div>
+<p>The first argument to <code>eval-after-load</code> has to match the name that the package
+<code>provide</code>s (this usually matches the name of the command to enable the mode,
+but to double-check: <code><a class='glossary' href='glossary.html#keys'>C-h f diff-mode</a></code>, follow the link to <code>diff-mode.el.gz</code>,
+and find the <code>provide</code> form near the bottom).</p>
+<h2 id='themes'>Color themes</h2>
+<p>Maybe you already have a favourite color theme, like <a href="http://slinky.imukuppi.org/zenburnpage/">Zenburn</a> or <a href="http://ethanschoonover.com/solarized">Solarized</a>. There are Emacs implementations
+(<a href="https://github.com/bbatsov/zenburn-emacs">Zenburn</a>, <a href="https://github.com/sellout/emacs-color-theme-solarized">Solarized</a>) built on top of the
+<a href="http://www.nongnu.org/color-theme/"><code>color-theme</code></a> <a class='glossary' href='glossary.html#minormode'>minor mode</a>. <code>color-theme</code>
+is a third-party package; it doesn&rsquo;t come with Emacs.</p>
+
+<p>Note that Emacs 24, which hasn&rsquo;t been officially released yet, provides a
+built-in mechanism for defining multiple color themes. Nevertheless, I&rsquo;ll walk
+you through the process of installing third-party packages using <code>color-theme</code>
+and the Solarized theme as examples.</p>
+<!-- TODO: Find a better example once Emacs 24 is released. -->
+<p>Emacs 24 will also come with a package management system, so&mdash;as long as the
+package&rsquo;s author has taken advantage of the new mechanism&mdash;the manual
+installation procedure described below will not be necessary either.</p>
+<h2 id='packages'>Installing third-party elisp packages</h2>
+<p>I&rsquo;ll assume that you are keeping your <code>~/.emacs.d</code> under version control using
+git.<a id='fnref3' href='#fn3' class='footnote'>[3]</a></p>
+
+<p><code>color-theme</code>&rsquo;s <a href="http://www.nongnu.org/color-theme/#sec5">installation instructions</a> recommend using your package manager
+(<code>apt-get install emacs-goodies-el</code> or <code>port install color-theme-mode.el</code>,
+etc.) but I prefer to manage all my Emacs extensions in a single place. That
+place is my <code>~/.emacs.d</code> directory, because I will eventually want an extension
+that isn&rsquo;t provided by my system&rsquo;s package manager.</p>
+<div class='do'>
+  <p>Download the <a href="http://download.savannah.nongnu.org/releases/color-theme/">color-theme.6.6.0.tar.gz</a> and extract into
+  <code>~/.emacs.d</code>.</p>
+  
+  <p><code>git add color-theme.6.6.0;</code><br/>
+  <code>git commit -m "color-theme 6.6.0 from http://www.nongnu.org/color-theme/";</code></p>
+</div>
+<div class='do'>
+  <p>Add the color-theme directory to your Emacs <code>load-path</code>:</p>
+  <div class='titlebar'><p>init.el</p></div>
+  <div class='window'>(add-to-list 'load-path <span class="string">"~/.emacs.d/color-theme-6.6.0"</span>)&#x000A;</div>
+</div>
+<div class='do'>
+  <p>And actually load it:</p>
+  <div class='window'>(<span class="keyword">require</span> '<span class="constant">color-theme</span>)&#x000A;</div>
+</div>
+<p>Now you can select a theme with <code>color-theme-select</code>.</p>
+<h2 id='github'>Installing packages from github</h2>
+<p>The Solarized color theme for Emacs is <a href="https://github.com/sellout/emacs-color-theme-solarized">available on github</a>. If you are keeping
+your <code>~/.emacs.d</code> under version control using git, you can use git submodules
+to simplify the management of such third-party packages.</p>
+<div class='do'>
+  <p><code>cd ~/.emacs.d;</code><br/>
+  <code>git submodule add https://github.com/sellout/emacs-color-theme-solarized.git;</code></p>
+</div>
+<p>In future you can use <code>git pull</code> from <code>~/.emacs.d/emacs-color-theme-solarized/</code>
+to get the latest changes.</p>
+<div class='do'>
+  <p>Add <code>~/.emacs.d/emacs-color-theme-solarized/</code> to your Emacs <code>load-path</code>, and
+  require <code>'color-theme-solarized</code>, as you did for the <code>color-theme</code> package.</p>
+</div>
+<p>Now you can activate the theme with <code>color-theme-solarized-light</code> (or <code>-dark</code>).</p>
+<h2 id='size'>Increasing the font size</h2>
+<p><code><a class='glossary' href='glossary.html#keys'>C-x C-</a>+</code>, <code><a class='glossary' href='glossary.html#keys'>C-x C--</a></code>, and <code><a class='glossary' href='glossary.html#keys'>C-x C-0</a></code>. See <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Temporary-Face-Changes.html">&ldquo;Temporary Face Changes&rdquo;</a>.</p>
+<h2 id='variable-pitch'>variable-pitch-mode</h2>
+<p>You can toggle between fixed- and variable-width fonts in a particular <a class='glossary' href='glossary.html#buffers'>buffer</a>
+with <code>variable-pitch-mode</code>. The face to customize is <code>variable-pitch</code>.</p>
+
+<p>To automatically enable <code>variable-pitch-mode</code>, add it to the hooks for all the
+<a class='glossary' href='glossary.html#majormode'>major modes</a> where you want it to take effect. For example, to <code>text-mode-hook</code>
+for editing plain text.</p>
+
+<p>If you really want it <em>everywhere</em>, I suppose there&rsquo;s no harm in setting the
+<code>default</code> face to a proportional font. The great advantage of
+<code>variable-pitch-mode</code>, though, is that it is so easy to switch between
+proportional- and fixed-width fonts when you come across some ascii art or an
+ascii table in a comment.</p>
+<div id='footnotes'>
+  <p><a id='fn1' href='#fnref1' class='footnote'>[1]</a>:
+  I found this—after some dead ends—with Info&rsquo;s <code>i</code>ndex command, typing
+  &ldquo;font&rdquo;, tab-completing, and trying whatever looked promising. I could just
+  have explored the Options menu instead, but—silly me—I had disabled the
+  menus because people on the internet said &ldquo;real Emacs power users disable the
+  menus.&rdquo; That might make sense on a text terminal, where you can&rsquo;t click the
+  menu anyway, but on OS X, where there&rsquo;s only one menu bar at the top of the
+  screen, it&rsquo;s just silly. See the next footnote.</p>
+  
+  <p><a id='fn2' href='#fnref2' class='footnote'>[2]</a>:
+  If you have disabled the menu, perhaps because you&rsquo;re using an init file
+  copied from someone else or something like the <a href="http://github.com/technomancy/emacs-starter-kit">Emacs starter kit</a>, you can re-enable it just
+  for this session with <code><a class='glossary' href='glossary.html#keys'>M-x menu-bar-mode</a></code>.</p>
+  
+  <p><a id='fn3' href='#fnref3' class='footnote'>[3]</a>:
+  <code>cd ~/.emacs.d; git init .; git add init.el; git status; git diff --cached;</code><br/>
+  <code>git commit -m "My emacs init file."</code></p>
+  
+  <p><a id='fn4' href='#fnref4' class='footnote'>[4]</a>:
+  This customization—with several others—is borrowed from the <a href="https://github.com/technomancy/emacs-starter-kit">Emacs
+  Starter Kit</a>.</p>
+</div>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='customize_general.html'>Next: General customization</a></p>
+    </div>
+  </body>
+</html>

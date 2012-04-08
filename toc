@@ -1,0 +1,22 @@
+1. howtolearn
+2. why
+
+—Basic usage—
+3. install
+4. tutorial
+5. basic_c +subsections
+
+—Basic customisation—
+6. customize_c +subsections
+7. customize_colors +subsections
+8. customize_general +subsections
+
+—Miscellaneous—
+9. info +subsections
+10. contribute_emacs
+
+—Appendices—
+A. ergonomics
+B. osx
+C. contribute_guide
+D. glossary

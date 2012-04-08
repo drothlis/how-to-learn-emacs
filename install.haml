@@ -1,0 +1,56 @@
+%h1 Install the right Emacs
+
+Install the latest release of [GNU Emacs]( http://www.gnu.org/s/emacs/) (23.3
+as of this writing). Not XEmacs, not EmacsW32, not AquaMacs, not Carbon Emacs.
+
+%h2 Linux
+
+Emacs is probably already installed; if not, use your distro's package manager
+(yum, apt-get, etc).
+
+If your distro only has older Emacs packages, I suggest you [build the latest
+version from source](
+http://www.gnu.org/software/emacs/emacs-faq.html#Compiling-and-installing-Emacs),
+if you are comfortable doing so.
+
+%h2 OS X
+
+If you use [macports]( http://www.macports.org/), install the `emacs-app` port,
+which gives you a native OS X application. By default macports will install
+Emacs.app into /Applications/MacPorts. If you use a laptop I recommend the
+`fullscreen` variant (i.e. `port install emacs-app +fullscreen`) which adds the
+command `ns-toggle-fullscreen` to Emacs.
+
+If you use [homebrew]( http://mxcl.github.com/homebrew/):
+`brew install emacs --cocoa`.
+
+Otherwise, you can use a [pre-built emacs]( http://emacsformacosx.com/), but do
+consider installing macports or homebrew so that you can easily install other
+Unixy tools as you need them.
+
+%h2 Windows
+
+You are mostly on your own as I am not a Windows user; I apologize in advance
+if some of the examples in this guide don't work on your system, as I haven't
+tested on Windows.
+
+You'll want to download the latest `emacs-xx.x-bin-i386.zip` from
+<http://ftp.gnu.org/pub/gnu/emacs/windows/> and unzip it into a directory of
+your choice. Then run `addpm.exe` from the `bin` subdirectory, as an
+administrator (this adds a start menu shortcut and various registry entries).
+
+Some Emacs functionality requires Unixy tools like `find` and `grep`, which you
+can get by installing a posix emulation environment such as [Cygwin](
+http://www.gnu.org/software/emacs/windows/Other-useful-ports.html). You will
+have to ensure that the posix utilities are on the system PATH so that Emacs
+can find them.
+
+For further help refer to the [GNU Emacs FAQ for MS Windows](
+http://www.gnu.org/software/emacs/windows/) and the (often outdated)
+[EmacsWiki]( http://www.emacswiki.org/emacs/MsWindowsInstallation).
+
+%h2 Remove any existing .emacs configuration
+
+If you have existing Emacs customizations in a `.emacs` file or `.emacs.d`
+directory, you should move it out of the way if you want your Emacs behavior to
+exactly mirror the examples in this guide.

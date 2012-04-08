@@ -1,0 +1,89 @@
+%h1 OS X
+
+%h2 Control and Command keys
+
+Mac keyboards conveniently have separate Control, Meta (a.k.a. Option or Alt)
+and Command (⌘) keys. You have the traditional Emacs bindings on Control and
+Meta, and the OS X bindings on Command.
+
+As recommended previously, you should strongly consider re-binding Caps Lock
+to Control, system-wide. Go to System Preferences > Keyboard > Modifier Keys.
+
+On a laptop's smaller keyboard there is no Control key for the right hand. Good
+ergonomic practice is to use a right-hand Control key with a left-hand normal
+key, instead of stretching your left hand. You can use the open-source
+[KeyRemap4MacBook]( http://pqrs.org/macosx/keyremap4macbook/index.html) to bind
+your Return key to an additional Control—but only when held down; hitting it
+once still registers as Return. Try it! It's not as crazy as it sounds.
+KeyRemap4MacBook, despite its name, works on any recent Mac.
+
+After you have passed the initial learning curve and are used to the Emacs
+bindings for opening, saving, copying, cutting, pasting, and undo, you may want
+to re-bind the Command keys to be additional Meta keys, simply to offer a
+larger target for your fingers:
+
+.titlebar<
+  init.el
+.window<
+  :preserve
+    (setq mac-command-modifier 'meta)
+    (global-set-key (kbd <span class="string">"M-`"</span>) 'other-frame)
+
+(The second line keeps the very useful ⌘-\` behavior.)
+-#
+Rebinding Command in this way won't work when running Emacs inside a terminal,
+as the terminal program will intercept the Command keybindings.
+
+If you choose to leave the Command modifier alone, you might want to rebind
+`⌘-q` because it is so close to the frequently-used `M-q`. Or at least make
+Emacs prompt before quitting:
+
+.window<
+  :preserve
+    (<span class="keyword">defun</span> <span class="function-name">ask-before-closing</span> ()
+      (interactive)
+      (<span class="keyword">if</span> (y-or-n-p <span class="string">"Are you sure you want to exit Emacs? "</span>)
+          (save-buffers-kill-emacs)
+        (message <span class="string">"Canceled exit"</span>)))
+    (global-set-key (kbd <span class="string">"s-q"</span>) 'ask-before-closing)
+
+
+%h2 System-wide PATH
+
+When you start Emacs.app from the Finder (or the Dock, or Spotlight) the
+environment doesn't contain customizations from your `.bash_profile` or
+`.bashrc` files. If you run a shell inside Emacs (`M-x shell`) that shell
+*will* load your `.bashrc`, but other Emacs commands like `shell-command`,
+`grep` and `compile` won't.
+
+You can modify Emacs's environment directly in your init file:
+
+.window<
+  :preserve
+    (setenv <span class="string">"PATH"</span> (concat (getenv <span class="string">"HOME"</span>) <span class="string">"/bin:"</span>
+                           <span class="string">"/opt/local/bin:"</span>
+                           (getenv <span class="string">"PATH"</span>)))
+
+You can also set environment variables to apply to any OS X application in your
+login session, by creating the file `~/.MacOSX/environment.plist`:
+
+.titlebar<
+  \~/.MacOSX/environment.plist
+.window<
+  :preserve
+    &lt;?xml <span class="bold">version</span>=<span class="string">"1.0"</span> <span class="bold">encoding</span>=<span class="string">"UTF-8"</span>?&gt;
+    &lt;!DOCTYPE plist PUBLIC <span class="string">"-//Apple//DTD PLIST 1.0//EN"</span>
+                           <span class="string">"http://www.apple.com/DTDs/PropertyList-1.0.dtd"</span>&gt;
+    &lt;<span class="bold">plist</span> <span class="bold">version</span>=<span class="string">"1.0"</span>&gt;
+    &lt;<span class="bold">dict</span>&gt;
+            &lt;<span class="bold">key</span>&gt;PATH&lt;/<span class="bold">key</span>&gt;
+            &lt;<span class="bold">string</span>&gt;/usr/bin:/bin:/usr/sbin:/sbin&lt;/<span class="bold">string</span>&gt;
+    &lt;/<span class="bold">dict</span>&gt;
+    &lt;/<span class="bold">plist</span>&gt;
+
+
+%h2 Running Emacs from the command line
+
+If you're using Emacs.app installed by macports, you can find the command-line
+version in `/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs`. (Useful
+when you need to run Emacs with certain command-line switches, like `-Q`).

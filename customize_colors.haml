@@ -1,0 +1,294 @@
+%h1 Fix that awful color scheme
+
+The default Emacs color scheme is affectionately known as "angry fruit salad".
+
+%h2#default Default font
+
+["Fonts" in the Emacs manual](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Fonts.html)[[1]] says:
+
+.do
+  Click on 'Set Default Font' in the 'Options' menu. To save this for future
+  sessions, click on 'Save Options' in the 'Options' menu.[[2]]
+
+"DejaVu Sans Mono" is a good choice (also known as "Bitstream Vera Sans Mono",
+or "Menlo" on OS X 10.6+). Do choose a fixed-width font, even if you like
+proportional fonts for programming. We'll cover Emacs's handling of
+proportional fonts later.
+
+The "Save Options" menu command automatically modified your init file with the
+new settings (and told you so in the echo area, now in the `*Messages*` buffer
+if you missed it).
+
+There is a [known bug]( http://debbugs.gnu.org/cgi/bugreport.cgi?bug=2845) on
+OS X that prevents "Save Options" from saving changes to the default font. OS X
+users will have to use the `customize-face` mechanism I explain below,
+specifying `default` as the face name.
+
+
+%h2#colours Syntax highlighting colours
+
+[Font Lock mode](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html) is the
+minor mode responsible for syntax highlighting. You can read up on font-lock
+mode if you want to figure out how Emacs decides what is a comment or a keyword
+or a variable, or how to add your own keywords.
+
+But to merely change the colours:
+
+.do
+  Figure out the name of the face you want to change: `describe-face` (defaults
+  to the face at point) or `list-faces-display`.
+
+.do
+  `modify-face` will prompt you for a face and for each attribute to change.
+  Leave attributes as "unspecified" (the default) to inherit from the default
+  face. When it comes to the foreground and background colours, you can use the
+  predefined colours shown by tab-completion, or you can specify RGB hex values
+  like `#3f7f5f`.
+
+.do
+  `customize-face` brings up the "easy customization" interface I warned you
+  against in the previous chapter. Click the `State` button and select `Save
+  for Future Sessions`. (You can make changes here too, but I prefer
+  `modify-face` because it gives you tab-completion on the possible values for
+  each attribute.)
+
+Apart from `describe-face`, which I found in the Help menu, I found all these
+in the Emacs manual under ["Faces"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Faces.html),
+["Standard Faces"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Standard-Faces.html)
+and ["Customizing Faces"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Face-Customization.html).
+
+Now let's figure out how to bypass the "easy customization" interface:
+
+.do
+  Visit your init file to see what "easy customization" added. If you already
+  had the file open, you may need `revert-buffer` to see the latest changes.
+
+.titlebar<
+  init.el
+.window.default.new-comment-face<
+  :preserve
+    (custom-set-variables
+      <span class="comment">;; custom-set-variables was added by Custom.
+      ;; If you edit it by hand, you could mess it up, so be careful.
+      ;; Your init file should contain only one such instance.
+      ;; If there is more than one, they won't work right.</span>
+     )
+    (custom-set-faces
+      <span class="comment">;; custom-set-faces was added by Custom.
+      ;; If you edit it by hand, you could mess it up, so be careful.
+      ;; Your init file should contain only one such instance.
+      ;; If there is more than one, they won't work right.</span>
+     '(default ((t (<span class="builtin">:height</span> 120 <span class="builtin">:family</span> <span class="string">"Menlo"</span>))))
+     '(font-lock-comment-face ((t (<span class="builtin">:foreground</span> <span class="string">"#3f7f5f"</span>)))))
+    
+
+You could configure the remaining font-lock faces by adding arguments to the
+`custom-set-faces` form, but they might be overwritten if you use the easy
+customization framework in future. Inspired by the name `custom-set-faces`, I
+searched for functions beginning with `set-face` and found
+`set-face-attribute`:
+
+.window<
+  :preserve
+    (set-face-attribute 'default nil <span class="builtin">:family</span> <span class="string">"Menlo"</span> <span class="builtin">:height</span> 120)
+    (set-face-attribute 'font-lock-comment-face nil <span class="builtin">:foreground</span> <span class="string">"#3f7f5f"</span>)
+    (set-face-attribute 'font-lock-string-face nil <span class="builtin">:foreground</span> <span class="string">"#4f004f"</span>)
+    (set-face-attribute 'font-lock-constant-face nil <span class="builtin">:foreground</span> <span class="string">"#4f004f"</span>)
+    (set-face-attribute 'font-lock-keyword-face nil <span class="builtin">:foreground</span> <span class="string">"#00003f"</span>)
+    (set-face-attribute 'font-lock-builtin-face nil <span class="builtin">:foreground</span> <span class="string">"#00003f"</span>)
+    (set-face-attribute 'font-lock-type-face nil <span class="builtin">:foreground</span> <span class="string">"#000000"</span>)
+    (set-face-attribute 'font-lock-function-name-face nil
+                        <span class="builtin">:foreground</span> <span class="string">"#000000"</span> <span class="builtin">:weight</span> 'bold)
+    (set-face-attribute 'font-lock-variable-name-face nil
+                        <span class="builtin">:foreground</span> <span class="string">"#000000"</span> <span class="builtin">:weight</span> 'bold)
+
+The above settings produce a very conservative dark-on-white color scheme. I
+like it because in many languages it highlights variable and function
+*definitions* but not their uses.
+
+For all the face attribute names see ["Face Attributes"](
+http://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Attributes.html)
+in the Emacs Lisp manual. As to elisp syntax, [keyword symbols](
+http://www.gnu.org/software/emacs/manual/html_node/elisp/Symbol-Type.html) like
+`:foreground` and `:weight` are constants (that evaluate to themselves so you
+don't have to quote them).
+
+
+%h2#diff diff-mode
+
+While we're on colours, let's add some helpful colouring to `diff-mode` (which
+we came across earlier, in the section on the `vc` version control
+interface).[[4]]
+
+.do
+  .titlebar<
+    init.el
+  .window<
+    :preserve
+      (<span class="keyword">eval-after-load</span> 'diff-mode
+        '(<span class="keyword">progn</span>
+           (set-face-foreground 'diff-added <span class="string">"green4"</span>)
+           (set-face-foreground 'diff-removed <span class="string">"red3"</span>)))
+
+`eval-after-load` does what it says: The first time `diff-mode` is loaded,
+evaluate the following form. Emacs tends not to load every elisp package on
+startup, but waits until you actually *use* `diff-mode` to load it.
+
+If you used `(set-face-foreground 'diff-added ...)` directly in your init file,
+you would get the error "invalid face diff-added". You could explicitly load
+`diff-mode` (using `require`) in your init file, but that would increase
+Emacs's startup time—ever so slightly—every time you run Emacs in the
+terminal for a quick job that won't even use `diff-mode`.
+
+`eval-after-load` takes a single form to evaluate, but we want to make two
+function calls, so we wrap them in `progn` which merely evaluates a bunch of
+forms sequentially. We quote it so that it doesn't get evaluated right now,
+before even being passed to `eval-after-load`.
+
+.figure
+  .titlebar<
+    diff-mode.el.gz
+  .window<
+    :preserve
+      &nbsp;
+      <span class="comment-delimiter">;; </span><span class="comment">provide the package
+      </span><span class="esk-paren">(</span><span class="keyword">provide</span> '<span class="constant">diff-mode</span><span class="esk-paren">)</span>
+
+The first argument to `eval-after-load` has to match the name that the package
+`provide`s (this usually matches the name of the command to enable the mode,
+but to double-check: `C-h f diff-mode`, follow the link to `diff-mode.el.gz`,
+and find the `provide` form near the bottom).
+
+
+%h2#themes Color themes
+
+Maybe you already have a favourite color theme, like [Zenburn](
+http://slinky.imukuppi.org/zenburnpage/) or [Solarized](
+http://ethanschoonover.com/solarized). There are Emacs implementations
+([Zenburn]( https://github.com/bbatsov/zenburn-emacs), [Solarized](
+https://github.com/sellout/emacs-color-theme-solarized)) built on top of the
+[`color-theme`]( http://www.nongnu.org/color-theme/) minor mode. `color-theme`
+is a third-party package; it doesn't come with Emacs.
+
+Note that Emacs 24, which hasn't been officially released yet, provides a
+built-in mechanism for defining multiple color themes. Nevertheless, I'll walk
+you through the process of installing third-party packages using `color-theme`
+and the Solarized theme as examples.
+
+/ TODO: Find a better example once Emacs 24 is released.
+
+Emacs 24 will also come with a package management system, so--as long as the
+package's author has taken advantage of the new mechanism--the manual
+installation procedure described below will not be necessary either.
+
+
+%h2#packages Installing third-party elisp packages
+
+I'll assume that you are keeping your `~/.emacs.d` under version control using
+git.[[3]]
+
+`color-theme`'s [installation instructions](
+http://www.nongnu.org/color-theme/#sec5) recommend using your package manager
+(`apt-get install emacs-goodies-el` or `port install color-theme-mode.el`,
+etc.) but I prefer to manage all my Emacs extensions in a single place. That
+place is my `~/.emacs.d` directory, because I will eventually want an extension
+that isn't provided by my system's package manager.
+
+.do
+  Download the [color-theme.6.6.0.tar.gz](
+  http://download.savannah.nongnu.org/releases/color-theme/) and extract into
+  `~/.emacs.d`.
+
+  `git add color-theme.6.6.0;`  
+  `git commit -m "color-theme 6.6.0 from http://www.nongnu.org/color-theme/";`
+
+.do
+  Add the color-theme directory to your Emacs `load-path`:
+  -#
+  .titlebar<
+    init.el
+  .window<
+    :preserve
+      (add-to-list 'load-path <span class="string">"~/.emacs.d/color-theme-6.6.0"</span>)
+
+.do
+  And actually load it:
+  -#
+  .window<
+    :preserve
+      (<span class="keyword">require</span> '<span class="constant">color-theme</span>)
+
+Now you can select a theme with `color-theme-select`.
+
+
+%h2#github Installing packages from github
+
+The Solarized color theme for Emacs is [available on github](
+https://github.com/sellout/emacs-color-theme-solarized). If you are keeping
+your `~/.emacs.d` under version control using git, you can use git submodules
+to simplify the management of such third-party packages.
+
+.do
+  `cd ~/.emacs.d;`  
+  `git submodule add https://github.com/sellout/emacs-color-theme-solarized.git;`
+
+In future you can use `git pull` from `~/.emacs.d/emacs-color-theme-solarized/`
+to get the latest changes.
+
+.do
+  Add `~/.emacs.d/emacs-color-theme-solarized/` to your Emacs `load-path`, and
+  require `'color-theme-solarized`, as you did for the `color-theme` package.
+
+Now you can activate the theme with `color-theme-solarized-light` (or `-dark`).
+
+
+%h2#size Increasing the font size
+
+`C-x C-+`, `C-x C--`, and `C-x C-0`. See ["Temporary Face Changes"](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Temporary-Face-Changes.html).
+
+
+%h2#variable-pitch variable-pitch-mode
+
+You can toggle between fixed- and variable-width fonts in a particular buffer
+with `variable-pitch-mode`. The face to customize is `variable-pitch`.
+
+To automatically enable `variable-pitch-mode`, add it to the hooks for all the
+major modes where you want it to take effect. For example, to `text-mode-hook`
+for editing plain text.
+
+If you really want it *everywhere*, I suppose there's no harm in setting the
+`default` face to a proportional font. The great advantage of
+`variable-pitch-mode`, though, is that it is so easy to switch between
+proportional- and fixed-width fonts when you come across some ascii art or an
+ascii table in a comment.
+
+
+#footnotes
+  [[1]]:
+  I found this—after some dead ends—with Info's `i`ndex command, typing
+  "font", tab-completing, and trying whatever looked promising. I could just
+  have explored the Options menu instead, but—silly me—I had disabled the
+  menus because people on the internet said "real Emacs power users disable the
+  menus." That might make sense on a text terminal, where you can't click the
+  menu anyway, but on OS X, where there's only one menu bar at the top of the
+  screen, it's just silly. See the next footnote.
+
+  [[2]]:
+  If you have disabled the menu, perhaps because you're using an init file
+  copied from someone else or something like the [Emacs starter kit](
+  http://github.com/technomancy/emacs-starter-kit), you can re-enable it just
+  for this session with `M-x menu-bar-mode`.
+
+  [[3]]:
+  `cd ~/.emacs.d; git init .; git add init.el; git status; git diff --cached;`  
+  `git commit -m "My emacs init file."`
+
+  [[4]]:
+  This customization—with several others—is borrowed from the [Emacs
+  Starter Kit]( https://github.com/technomancy/emacs-starter-kit).

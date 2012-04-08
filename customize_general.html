@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: General customization
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li class='current'>8. General customization
+    <ul>
+      <li><a href="#ido">ido-mode</a></li>
+      <li><a href="#minimalism">Minimalism</a></li>
+      <li><a href="#elisp">Navigating Emacs Lisp</a></li>
+      <li><a href="#shell">shell</a></li>
+      <li><a href="#other">Other ideas</a></li>
+    </ul>
+  </li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>General customization</h1>
+<h2 id='ido'>ido-mode</h2>
+<p>Other editors and IDEs have nice tree views of directories and files, as well
+as tabs for switching between <a class='glossary' href='glossary.html#buffers'>buffers</a>. Emacs does have a rather ugly tree
+view—<code><a class='glossary' href='glossary.html#keys'>M-x speedbar</a></code> if you want to see <em>how</em> ugly—but the real Emacs answer
+to navigating large projects is <code>ido-mode</code>.</p>
+<div class='figure'>
+  <div class='titlebar'><p>init.el</p></div>
+  <div class='window'>(ido-mode 1)&#x000A;&nbsp;</div>
+  <div class='modeline'>-U:---  <b>init.el</b>      All L17      (Emacs-Lisp)----------------------------------------</div>
+  <div class='echoarea'><p><span class="prompt">Find file: .../readline/</span>ex<span class="cursor">{</span><span class="ido-first-match">examples/</span> | histexpand.c | text.c}</p></div>
+</div>
+<p><code>ido-mode</code> remaps the keybindings for <code>find-file</code> and <code>switch-to-buffer</code> to
+more powerful versions of the same. You&rsquo;ll only need to type a few letters of
+the file or <a class='glossary' href='glossary.html#buffers'>buffer</a> name (not necessarily matching the beginning of the name,
+and not necessarily adjacent letters). A list of matches, in most-recently-used
+order, is displayed in the <a class='glossary' href='glossary.html#minibuffer'>minibuffer</a>; <code>&lt;right&gt;</code> and <code>&lt;left&gt;</code> (or <code><a class='glossary' href='glossary.html#keys'>C-s</a></code> and
+<code><a class='glossary' href='glossary.html#keys'>C-r</a></code>) navigate amongst the matches. If nothing matches, after a brief
+(and configurable) pause <code>ido</code> can search previously-used directories.</p>
+
+<p>Because <code>RET</code> opens the first matching file, to actually open a directory
+you&rsquo;ll have to use <code><a class='glossary' href='glossary.html#keys'>C-f</a></code> (at the <code>ido-find-file</code> prompt) to drop back into
+normal <code>find-file</code>.</p>
+
+<p><code>ido</code> ships with Emacs but isn&rsquo;t present at all in the manual; read the online
+help for the <code>ido-find-file</code> command. For more details and configuration
+instructions, use <code><a class='glossary' href='glossary.html#keys'>C-h f ido-mode</a></code> to find its elisp implementation, and read
+the long comment at the top of the elisp file.</p>
+
+<p>Emacs users tend to leave <a class='glossary' href='glossary.html#buffers'>buffers</a> open when they have finished with them, and
+after a while have hundreds of <a class='glossary' href='glossary.html#buffers'>buffers</a> open so <code>ido-switch-buffer</code> effectively
+becomes &ldquo;find file in project&rdquo;.</p>
+
+<p>To save your list of open files between invocations of Emacs, or to manage
+separate sets of open files (if you&rsquo;re working on several projects in
+parallel), see <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html">&ldquo;Saving Emacs Sessions&rdquo;</a>
+in the Emacs manual.</p>
+<h2 id='minimalism'>Minimalism</h2>
+<p>To make the most of your screen space, consider disabling the toolbar and
+scrollbars:</p>
+<div class='titlebar'><p>init.el</p></div>
+<div class='window'>(tool-bar-mode -1)&#x000A;(scroll-bar-mode -1)&#x000A;</div>
+<p>Similarly, you can disable the menu bar with <code>(menu-bar-mode -1)</code>, though I
+find the menu bar useful for discovering Emacs features; major and <a class='glossary' href='glossary.html#minormode'>minor modes</a>
+often add their own menu to the menu bar. As previously noted, you certainly
+shouldn&rsquo;t disable the menu bar on OS X; if you&rsquo;d like to share your Emacs init
+file among several environments you could conditionally disable <code>menu-bar-mode</code>
+based on the value of variables <code>system-type</code> and <code>window-system</code>.</p>
+
+<p>Some commands like <code>revert-buffer</code> force you to confirm by typing <code>yes</code>; it
+would be nice to just type <code>y</code>. If you look at the definition of
+<code>revert-buffer</code> you&rsquo;ll find it calls <code>yes-or-no-p</code>, which we can redefine to
+call <code>y-or-n-p</code> instead:</p>
+<div class='window'>(<span class="keyword">defun</span> <span class="function-name">yes-or-no-p</span> (prompt)&#x000A;  (y-or-n-p prompt))&#x000A;</div>
+<p>Or more simply:</p>
+<div class='window'>(<span class="keyword">defalias</span> '<span class="function-name">yes-or-no-p</span> 'y-or-n-p)&#x000A;</div>
+<p>Another thing everyone does the second they install Emacs is to prevent the
+creation of a &ldquo;<code>~</code>&rdquo;-suffixed backup file on every save:</p>
+<div class='window'>(setq make-backup-files nil)&#x000A;</div>
+<p>Rely on your version control system for backups instead.</p>
+<h2 id='elisp'>Navigating Emacs Lisp</h2>
+<p>In the last couple of chapters I have encouraged you to discover Emacs
+functionality by studying the elisp code directly. To make the job easier we
+already saw <code>show-paren-mode</code> and <code>eldoc-mode</code>; let&rsquo;s enable them globally
+because they&rsquo;re useful in other programming languages too.</p>
+<div class='window'>(show-paren-mode 1)&#x000A;(eldoc-mode 1)&#x000A;</div>
+<p>We&rsquo;ll also re-bind <code>M-.</code> from its default <code>find-tag</code> to
+<code>find-function-at-point</code>, but only for elisp files, for which you don&rsquo;t need a
+tags table because Emacs already knows all about every elisp function it has
+loaded.</p>
+<div class='window'>(define-key emacs-lisp-mode-map&#x000A;  (kbd <span class="string">"M-."</span>) 'find-function-at-point)&#x000A;</div>
+<p>If you plan on <em>writing</em> a lot of Lisp, <code>paredit-mode</code> is great for always
+keeping your parentheses balanced, and for moving whole forms around when
+refactoring—but it does take some getting used to.</p>
+<h2 id='shell'>shell</h2>
+<p>If you ever tried to run a program like git under <code><a class='glossary' href='glossary.html#keys'>M-x shell</a></code>, you will have
+come across the warning &ldquo;terminal is not fully functional&rdquo; followed by unusable
+behavior. This is because git sends its output through a pager (probably
+<code>less</code>), which requires a real terminal emulator.</p>
+
+<p>Setting the <code>PAGER</code> environment variable to <code>/bin/cat</code> (but only inside Emacs)
+solves this problem:</p>
+<div class='titlebar'><p>init.el</p></div>
+<div class='window'>(setenv <span class="string">"PAGER"</span> <span class="string">"/bin/cat"</span>)&#x000A;</div>
+<p>This also allows you to use <code>git grep</code> from <code><a class='glossary' href='glossary.html#keys'>M-x grep</a></code>.</p>
+<p>Make sure you don&rsquo;t override <code>PAGER</code> in your <code>~/.gitconfig</code> file or the
+<code>GIT_PAGER</code> environment variable (and <code>MANPAGER</code> for the <code>man</code> program, etc).</p>
+
+<p>If you need to make customizations in your <code>~/.bashrc</code> file (or the
+corresponding file for your shell of choice) you can test for the environment
+variable <code>INSIDE_EMACS</code>. To configure which shell Emacs uses, see <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Interactive-Shell.html">the manual</a>.</p>
+<h2 id='other'>Other ideas</h2>
+<p>Other customizations you might like to make are covered by the Emacs manual:</p>
+
+<ul>
+<li><a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html">Minor Modes</a>.</li>
+<li><a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html">Making Buffer Names Unique</a>.</li>
+<li><a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Cursor-Display.html">Displaying The Cursor</a>
+(in particular <code>global-hl-line-mode</code>).</li>
+</ul>
+
+
+<p>For further inspiration you might want to look at other people&rsquo;s init files,
+widely available on the <a href="http://www.emacswiki.org/emacs/CategoryDotEmacs">Emacs wiki</a> and on the <a href="http://sites.google.com/site/steveyegge2/my-dot-emacs-file">internet at
+large</a>. Some of
+the customizations I have presented here came from the <a href="http://github.com/technomancy/emacs-starter-kit">Emacs Starter Kit</a>, a collection of elisp files
+to provide &ldquo;a more pleasant set of defaults than you get normally with Emacs&rdquo;.</p>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='info.html'>Next: Info documentation</a></p>
+    </div>
+  </body>
+</html>

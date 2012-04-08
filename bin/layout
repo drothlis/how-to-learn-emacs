@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Prints a complete html page to stdout from the layout filename in $1 and the
+# content on stdin.
+
+sed -e '/-- Contents --/ q' $1
+cat
+sed -n -e '/-- Contents --/,$ p' $1

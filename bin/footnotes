@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Replaces "[1]" on stdin with an html link to #fn1 on stdout;
+# similarly, replaces "[1]:" with an html anchor for #fn1.
+
+# GNU sed uses "-r" for extended regexps; BSD sed uses "-E".
+if $(echo test | sed -r >/dev/null 2>&1); then
+    sed="sed -r"
+else
+    sed="sed -E"
+fi
+
+fn='\[\[([0-9]+)\]\]'
+$sed -e "/$fn/ s,$fn([^:]|\$),<a id='fnref\1' href='#fn\1' class='footnote'>[\1]</a>\2,g" \
+     -e "s,$fn:,<a id='fn\1' href='#fnref\1' class='footnote'>[\1]</a>:,"

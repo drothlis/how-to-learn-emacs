@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Replaces "<!-- Last updated -->" on stdin with the date of the latest commit.
+
+updated=$(git log -n1 --format=format:%cD "$@" | awk '{print $2, $3, $4 "."}')
+sed -e "s,<!-- Last updated -->,$updated,"

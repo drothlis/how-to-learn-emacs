@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Inserts, at the appropriate position on stdout, an html link to the next
+# chapter.
+
+plain_toc=$1
+chapter=$2
+next_chapter=$(awk "\$2 == \"$chapter\" { PRINT=1; next; }
+                    /^[0-9A-Z]+\. / && PRINT==1 { print \$2; exit; }" \
+                   < $plain_toc)
+
+if [ -n "$next_chapter" ]; then
+    next_title=$(sed -n 's,%h1 \(.*\),\1,p' $next_chapter.haml)
+    next_link="<a rel='next' href='$next_chapter.html'>Next: $next_title</a>"
+    sed -e "s,<!-- Next chapter link -->,<p class='next'>$next_link</p>,"
+else
+    cat
+fi

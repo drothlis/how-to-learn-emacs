@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: OS X
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li class='current'>B. OS X</li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>OS X</h1>
+<h2>Control and Command keys</h2>
+<p>Mac keyboards conveniently have separate Control, Meta (a.k.a. Option or Alt)
+and Command (⌘) keys. You have the traditional Emacs bindings on Control and
+Meta, and the OS X bindings on Command.</p>
+
+<p>As recommended previously, you should strongly consider re-binding Caps Lock
+to Control, system-wide. Go to System Preferences > Keyboard > Modifier Keys.</p>
+
+<p>On a laptop&rsquo;s smaller keyboard there is no Control key for the right hand. Good
+ergonomic practice is to use a right-hand Control key with a left-hand normal
+key, instead of stretching your left hand. You can use the open-source
+<a href="http://pqrs.org/macosx/keyremap4macbook/index.html">KeyRemap4MacBook</a> to bind
+your Return key to an additional Control—but only when held down; hitting it
+once still registers as Return. Try it! It&rsquo;s not as crazy as it sounds.
+KeyRemap4MacBook, despite its name, works on any recent Mac.</p>
+
+<p>After you have passed the initial learning curve and are used to the Emacs
+bindings for opening, saving, copying, cutting, pasting, and undo, you may want
+to re-bind the Command keys to be additional Meta keys, simply to offer a
+larger target for your fingers:</p>
+<div class='titlebar'><p>init.el</p></div>
+<div class='window'>(setq mac-command-modifier 'meta)&#x000A;(global-set-key (kbd <span class="string">"M-`"</span>) 'other-frame)&#x000A;</div>
+<p>(The second line keeps the very useful ⌘-` behavior.)</p>
+<p>Rebinding Command in this way won&rsquo;t work when running Emacs inside a terminal,
+as the terminal program will intercept the Command keybindings.</p>
+
+<p>If you choose to leave the Command modifier alone, you might want to rebind
+<code>⌘-q</code> because it is so close to the frequently-used <code><a class='glossary' href='glossary.html#keys'>M-q</a></code>. Or at least make
+Emacs prompt before quitting:</p>
+<div class='window'>(<span class="keyword">defun</span> <span class="function-name">ask-before-closing</span> ()&#x000A;  (interactive)&#x000A;  (<span class="keyword">if</span> (y-or-n-p <span class="string">"Are you sure you want to exit Emacs? "</span>)&#x000A;      (save-buffers-kill-emacs)&#x000A;    (message <span class="string">"Canceled exit"</span>)))&#x000A;(global-set-key (kbd <span class="string">"s-q"</span>) 'ask-before-closing)&#x000A;&#x000A;</div>
+<h2>System-wide PATH</h2>
+<p>When you start Emacs.app from the Finder (or the Dock, or Spotlight) the
+environment doesn&rsquo;t contain customizations from your <code>.bash_profile</code> or
+<code>.bashrc</code> files. If you run a shell inside Emacs (<code><a class='glossary' href='glossary.html#keys'>M-x shell</a></code>) that shell
+<em>will</em> load your <code>.bashrc</code>, but other Emacs commands like <code>shell-command</code>,
+<code>grep</code> and <code>compile</code> won&rsquo;t.</p>
+
+<p>You can modify Emacs&rsquo;s environment directly in your init file:</p>
+<div class='window'>(setenv <span class="string">"PATH"</span> (concat (getenv <span class="string">"HOME"</span>) <span class="string">"/bin:"</span>&#x000A;                       <span class="string">"/opt/local/bin:"</span>&#x000A;                       (getenv <span class="string">"PATH"</span>)))&#x000A;</div>
+<p>You can also set environment variables to apply to any OS X application in your
+login session, by creating the file <code>~/.MacOSX/environment.plist</code>:</p>
+<div class='titlebar'><p>~/.MacOSX/environment.plist</p></div>
+<div class='window'>&lt;?xml <span class="bold">version</span>=<span class="string">"1.0"</span> <span class="bold">encoding</span>=<span class="string">"UTF-8"</span>?&gt;&#x000A;&lt;!DOCTYPE plist PUBLIC <span class="string">"-//Apple//DTD PLIST 1.0//EN"</span>&#x000A;                       <span class="string">"http://www.apple.com/DTDs/PropertyList-1.0.dtd"</span>&gt;&#x000A;&lt;<span class="bold">plist</span> <span class="bold">version</span>=<span class="string">"1.0"</span>&gt;&#x000A;&lt;<span class="bold">dict</span>&gt;&#x000A;        &lt;<span class="bold">key</span>&gt;PATH&lt;/<span class="bold">key</span>&gt;&#x000A;        &lt;<span class="bold">string</span>&gt;/usr/bin:/bin:/usr/sbin:/sbin&lt;/<span class="bold">string</span>&gt;&#x000A;&lt;/<span class="bold">dict</span>&gt;&#x000A;&lt;/<span class="bold">plist</span>&gt;&#x000A;&#x000A;</div>
+<h2>Running Emacs from the command line</h2>
+<p>If you&rsquo;re using Emacs.app installed by macports, you can find the command-line
+version in <code>/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs</code>. (Useful
+when you need to run Emacs with certain command-line switches, like <code>-Q</code>).</p>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='contribute_guide.html'>Next: Contributing to this guide</a></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+
+# Replaces words on stdin with html links to their entry in the glossary.
+# Presence of any command-line argument inhibits all replacements (we don't want to
+# add links on the glossary html page itself, for example).
+
+while (<STDIN>) {
+  if (!@ARGV[0] && !/frame 1|tcpip-parser|Notepad|Making Buffer Names Unique/) {
+    s,<code>((C-M-|C-|M-|s-)([a-zA-Z0-9 /|-])+),<code><a class='glossary' href='glossary.html#keys'>$1</a>,g;
+    s,(?<!['"/>-])\b(frame)\b(?![/<]),<a class='glossary' href='glossary.html#frames'>$&</a>,gi;
+    s,(?<!['"/>-])\b(windows?)\b(?![/<]),<a class='glossary' href='glossary.html#windows'>$&</a>,g;
+    s,(?<!['"/>-])\b(buffers?)\b(?![/<-]),<a class='glossary' href='glossary.html#buffers'>$&</a>,gi;
+    s,(?<!['"/>-])\b(modeline)\b(?![/<]),<a class='glossary' href='glossary.html#modeline'>$&</a>,gi;
+    s,(?<!['"/>-])\b(echo area)\b(?![/<]),<a class='glossary' href='glossary.html#echoarea'>$&</a>,gi;
+    s,(?<!['"/>-])\b(minibuffer)\b(?![/<]),<a class='glossary' href='glossary.html#minibuffer'>$&</a>,gi;
+    s,(?<!['"/>-])\b(the (point|mark|region))\b,<a class='glossary' href='glossary.html#region'>$&</a>,gi;
+    s,(?<!['"/>-])\b(kill|yank)(ing)?\b,<a class='glossary' href='glossary.html#killing'>$&</a>,gi;
+    s,(?<!['"/>-])\b(editing modes?|major modes?)\b,<a class='glossary' href='glossary.html#majormode'>$&</a>,gi;
+    s,(?<!['"/>-])\b(minor modes?)\b,<a class='glossary' href='glossary.html#minormode'>$&</a>,gi;
+  }
+  print;
+}

@@ -1,0 +1,711 @@
+%h1 Basic Unix/C workflow
+
+This chapter uses the source code of the GNU Readline library as an example.
+You can grab it (by `cd`ing to a directory of your choice and then issuing the
+shell command `git clone git://git.savannah.gnu.org/readline.git`[[1]]) or
+follow along using your own C or C++ code.
+
+
+%h2#c c-mode
+
+.do
+  Start Emacs and open (`C-x C-f`) the file `readline/examples/rl.c`.
+
+.figure#minibuffer
+  .window<
+    &nbsp;
+  .modeline<
+    :preserve
+      -U:---  <b>*scratch*</b>      All L1      (Lisp Interaction)----------------------------------------
+  .echoarea<
+    <span class="prompt">Find file:</span> \.../readline/examples/rl.c
+  %p The minibuffer
+
+If you accidentally invoke `C-x C-f` again, or any other command that is
+expecting some kind of input from you, remember you can cancel by making sure
+the minibuffer has focus and pressing `C-g`.
+
+Because this is a C source file, Emacs has automatically activated an editing
+mode called "c-mode", which provides some custom keybindings and knowledge of C
+indentation rules and syntax highlighting. We will study c-mode in depth [later
+on]( customize_c.html).
+
+
+%h2#shell shell
+
+.do
+  Run the `shell` command (that is, `M-x shell RET`).
+
+This creates a new buffer running the shell specified by environment variable
+SHELL.[[2]] The buffer is called `*shell*` (the asterisks are part of the name,
+so you have to type them when switching to this buffer with `C-x b`).
+
+.do
+  `cd` to the `readline` directory and run the following shell commands:
+  -#
+  `./configure`  
+  `make`
+
+The `*shell*` buffer's editing mode is `shell-mode`. You can run almost any
+shell command inside shell-mode; the exceptions are anything that requires real
+terminal support, like pagers (`less`) and curses-based programs. You lose
+bash's readline completion and any custom bash-completion scripts, or the
+equivalent in your shell of choice (though Emacs provides its own command
+history and tab-completion). For these reasons, I tend to have a real terminal
+running (outside of Emacs) for some tasks, as well as a shell in Emacs. (Trying
+to do *everything* in Emacs reaches a point of diminishing returns.)
+
+The big advantage of `shell-mode` is that all output is available for you to
+search through, copy, paste, and otherwise act upon, all with the standard
+Emacs commands; you don't have to move your hand to the mouse just to select
+some text.
+
+Shell-mode adds a number of keybindings:
+
+.figure
+  .titlebar<
+    \\.../examples/rl.c
+  .window.default<
+    :preserve
+      gcc version 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.1.00)
+      /usr/llvm-gcc-4.2/bin/../libexec/gcc/i686-apple-darwin11/4.2.1/collect2 <span class="comment">-dynamic</span> <span class="comment">-dylib</span> <span class="comment">-dylib_compatibility_version</span> 6
+      <span class="comment">-dylib_current_version</span> 6.2 <span class="comment">-arch</span> x86_64 <span class="comment">-dylib_install_name</span> /usr/local/lib/libhistory.6.2.dylib
+      <span class="comment">-dynamic</span> <span class="comment">-macosx_version_min</span> 10.3 <span class="comment">-undefined</span> dynamic_lookup <span class="comment">-weak_referen
+      ce_mismatches</span> non-weak <span class="comment">-undefined</span> dynamic_lookup <span class="comment">-o</span> libhistory.6.2.dylib <span class="comment">-ldylib1.o</span> <span class="comment">-L/us
+      r/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/x86_64</span> <span class="comment">-L/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/x86_64</span>
+      
+      <span class="comint-highlight-prompt">readline$ </span><span class="cursor"> </span>
+      &nbsp;
+  .modeline<
+    :preserve
+      --:---  <b>*shell*</b>        Bot L404   (Shell:run)------------------------------
+  .window.default<
+    :preserve
+      <span class="bold">Shell</span> mode:
+      Major mode for interacting with an inferior shell.
+      RET after the end of the process' output sends the text from
+          the end of process to the end of the current line.
+      RET before end of process output copies the current line minus the prompt to
+          the end of the buffer and sends it (C-c RET just copies the current line).
+      M-x <span class="button">send-invisible</span> reads a line of text without echoing it, and sends it to
+          the shell.  This is useful for entering passwords.  Or, add the function
+          `<span class="button">comint-watch-for-password-prompt</span>' to `<span class="button">comint-output-filter-functions</span>'.
+  .modeline<
+    :preserve
+      -U:%%-  <b>*Help*</b>         Top L1     (Help View)------------------------------
+  .echoarea<
+    Type C-x 1 to delete the help window, C-M-v to scroll help.
+  %p The Help window
+
+.do
+  Type `C-h m` and read the documentation on shell-mode and its keybindings.
+
+(For now, don't bother reading the help text about customization—the variables
+and hooks shell-mode provides to modify its behavior. After shell-mode comes
+documentation for all the active minor modes; you don't need to read that
+either.)
+
+Of particular interest are pressing `RET` or `C-c RET` on a previous input
+line; `C-<up>` and `C-<down>` (or `M-p` and `M-n`) to cycle through previous
+commands; and `M-x dirs`.
+
+.do
+  Figure out how to send signals (e.g. C-c) to the shell. (Hint: search the
+  help buffer for "interrupt" and "stop".)
+.do
+  Figure out what `C-M-l` (that's the letter ell) and `C-c C-s` do (these are
+  both useful after running a shell command that produces a lot of
+  output).[[3]]
+
+
+%h2#eshell eshell
+
+If you're not particularly wedded to bash or any other shell, instead of
+`shell` you might consider using `eshell`, a shell totally implemented in Emacs
+lisp. Among other advantages, running eshell on Windows doesn't require Cygwin;
+you can enter lisp code or any Emacs command by name directly at the shell
+prompt; and you can redirect command output to the Emacs clipboard or to any
+open Emacs buffer.
+
+I don't use eshell myself, but many do. For now it might be simplest to stick
+with the shell you know (running inside Emacs).
+
+
+%h2#term ansi-term
+
+The final option for running a shell under Emacs is `ansi-term`. This is a full
+terminal emulator, and it will pass most key presses directly to the program
+running in the terminal. This includes `TAB`, so it will be the shell, not
+Emacs, performing tab-completion for you.
+
+`C-x` and `C-c` are still processed by Emacs; for `M-x` you'll have to type
+`C-x M-x`. You _can_ switch from "raw" character mode to "line" mode to get
+normal Emacs behavior back (e.g. for moving the cursor around so you can copy
+some previous output); nothing will be sent to the terminal until you press
+return.
+
+To find out how, you can't use `C-h m` because `C-h` is passed to the shell
+(where it probably means backspace). Instead of `C-h` use `<f1>`, or invoke
+`describe-mode` by name.
+
+
+%h2#shell-command shell-command
+
+To run a one-off shell command without opening a full shell buffer, use
+`shell-command` (`M-!`).
+
+.do
+  `M-! date RET`
+
+`shell-command-on-region` (`M-|`) is similar but sends the current region to
+the shell command's standard input. Let's use it to calculate the line count
+of `rl.c`'s `main` function:
+
+.do
+  Switch to buffer `rl.c` (with `C-x b`).
+  -#
+  Move the point to the `main` function (by searching with `C-s`).
+
+  Now move the point so that it is directly on the `main` function's opening
+  `{` bracket.
+
+  Press `C-SPC` to set the mark.
+
+  Press `C-M-f` to move point forward to the matching `}` bracket. The region
+  (the area between the mark and the point) now covers the full body of `main`.
+
+  `M-| wc -l RET`
+
+.window.default<
+  :preserve
+    <div class="region">  printf (<span class="string">"%s\n"</span>, temp);
+      exit (0);
+    }</div>
+
+.modeline<
+  :preserve
+    --:---  <b>rl.c</b>          Bot L158  Git-master  (C/l Abbrev)-----------------------------------
+.echoarea<
+  <span class="prompt">Shell command on region:</span> wc -l<span class="cursor"> </span>
+
+If you forget the names of these commands, type `M-x shell TAB TAB`.
+
+.do
+  Read the help for `shell-command-on-region`. You can look it up by keybinding
+  (`C-h k`) or by function name (`C-h f`).
+
+The help for this one is pretty long, but the important information is near the
+top. Ignore the paragraph on coding systems, and everything about
+noninteractive arguments (which are for calling this function from lisp
+scripts, as opposed to interactively like we have been doing).
+
+The sentence "Prefix arg means replace the region with [the output of the shell
+command]" refers to providing a numeric argument to the command. You'll
+remember numeric arguments from the tutorial. In this case the value of the
+argument doesn't matter, so `M-2 C-M-|` or `C-u C-M-|` will do.
+
+.do
+  Try it!
+
+.figure
+  .window<
+    &nbsp;
+  .modeline<
+    :preserve
+      --:<span class="notethis">**</span>-  <b>rl.c</b>          Bot L158  Git-master  (C/l Abbrev)-----------------------------------
+  .echoarea<
+  %p Unsaved modifications indicator
+
+.do
+  And now undo (`C-/`) what you've done to the buffer. Note the modeline
+  indicator when the buffer has unsaved modifications.
+
+
+%h2#sh sh-mode
+
+.do
+  Open the file `readline/configure`.
+
+If you are not particularly comfortable with shell scripting, I apologize for
+dumping you into a 12,000-line programmatically-generated script, but it's the
+closest one I had for an example.
+
+The mode for editing shell scripts is `sh-mode` (as opposed to `shell-mode` for
+running an interactive shell session, which we've seen already). If Emacs
+didn't figure out that the file is a shell script (perhaps it's missing the
+hash-bang interpreter directive on the first line) you can enter `sh-mode`
+with, you guessed it, `M-x sh-mode`.
+
+I don't really have much to say about `sh-mode`. It will do syntax highlighting
+and indentation for a variety of shells; and it provides keybindings to run the
+script, and to insert certain shell constructs (`case` statements, `for` loops,
+etc.) with the correct syntax for the current shell. If Emacs gets it wrong
+(again with the missing hash-bang!) you can tell Emacs which shell to use.
+
+By now you know where to find out how.
+
+
+%h2#infodoc Info documentation
+
+.do
+  Back in the `configure` script, invoke `info-lookup-symbol` and when prompted
+  enter `test`.
+
+Assuming that the Info documentation for the `bash` shell is correctly
+installed on your system (which should be the case for any Linux or OS X
+system, at least) you will see an Info window showing the `bash` manual at
+the very line for the `test` command.
+
+.do
+  Follow the link to "Bash Conditional Expressions". If you don't want to use
+  the mouse, `TAB` moves the point to the next link and `RET` does the obvious
+  thing.
+
+As usual, `C-h m` will show all the keybindings for `info` mode. For once,
+though, don't bother remembering all the keybindings, nor reading through the
+rather tedious Info tutorial. All you need to know is:
+
+* `SPC` and `DEL` for scrolling; when you get to the end of a "node" (a page or
+section), pressing `SPC` again goes to the next node in the sequence. I must
+warn you, `DEL` is sometimes buggy when you reach the first node in a chapter.
+* `l` (the letter ell) moves back in history.
+* `u` or `^` moves up to the nearest enclosing table of contents. Pressing `u`
+repeatedly will get you to the main Info directory containing all the Info
+manuals found on your system. (The Emacs-related manuals are also available [on
+the web]( http://www.gnu.org/software/emacs/manual/).)
+* Use the usual mechanisms for searching (`C-s` and `C-r`); when you reach the
+end of a node, pressing `C-s` again will continue searching through the rest of
+the manual.
+
+As you can see from the Info directory, there are many Info manuals, including
+manuals for Emacs itself, an Emacs Lisp reference and intro, and manuals for
+the more complex Emacs editing modes like `cc-mode`.
+
+I can't overstate how useful the Info documentation is. If you're maintaining a
+Makefile you can look up the meaning of esoteric symbols like `$@`. Need to do
+some socket programming? In a [later chapter](info.html) we will install the
+Info manuals for glibc (the GNU implementation of the Unix standard library).
+
+`info-lookup-symbol` uses the mode of the current buffer to determine which
+manual to look in. Sometimes it can't tell, so it will prompt you: Enter
+`sh-mode` or `makefile-mode` or `c-mode` or whatever (`TAB` to show all
+possible options). With a `C-u` prefix, `info-lookup-symbol` will always ask.
+
+
+%h2#compile compile
+
+.do
+  Switch to buffer `rl.c` (with `C-x b`) if necessary.
+  -#
+  Move the point to the `main` function (by searching with `C-s`).
+
+  Introduce a deliberate compilation error just after `main`'s opening `{`
+  bracket, as in the example below, and save your change.
+
+  `M-x compile` (and accept the default shell command of `make -k`).
+
+.titlebar<
+  rl.c
+.window.default<
+  :preserve
+    <span class="type">int</span>
+    <span class="function-name">main</span> (argc, argv)
+         <span class="type">int</span> <span class="variable-name">argc</span>;
+         <span class="type">char</span> **<span class="variable-name">argv</span>;
+    {
+      <b>failhere</b><span class="cursor">&nbsp;</span>
+      <span class="type">char</span> *<span class="variable-name">temp</span>, *<span class="variable-name">prompt</span>;
+      <span class="keyword">struct</span> <span class="type">stat</span> <span class="variable-name">sb</span>;
+      <span class="type">int</span> <span class="variable-name">opt</span>, <span class="variable-name">fd</span>, <span class="variable-name">nch</span>;
+      <span class="type">FILE</span> *<span class="variable-name">ifp</span>;
+.modeline<
+  :preserve
+    --:---  <b>rl.c</b>          59% L84   Git-master  (C/l Abbrev)-----------------------------------
+.window.default<
+  :preserve
+    make -k
+    rm -f rl.o
+    gcc -DHAVE_CONFIG_H -DREADLINE_LIBRARY -DRL_LIBRARY_VERSION='"6.2"'  -I. -I.. -I.. -g -O -c rl.c
+    <span class="function-name">rl.c</span>: In function &#8216;main&#8217;:
+    <span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">84</span></span><span class="underline">: </span>error: &#8216;failhere&#8217; undeclared (first use in this function)
+    <span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">84</span></span><span class="underline">: </span>error: (Each undeclared identifier is reported only once
+    <span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">84</span></span><span class="underline">: </span>error: for each function it appears in.)
+    <span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">85</span></span><span class="underline">: </span>error: expected &#8216;;&#8217; before &#8216;char&#8217;
+    <span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">97</span></span><span class="underline">: </span>error: &#8216;prompt&#8217; undeclared (first use in this function)
+    <span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">150</span></span><span class="underline">: </span>error: &#8216;temp&#8217; undeclared (first use in this function)
+.modeline<
+  :preserve
+    -U:%*-  <b>*compilation*</b>   Top L1     (Compilation<span class="error">:exit [2]</span>)-----------------------------------
+.echoarea<
+  Compilation exited abnormally with code 2
+
+.do
+  With the active cursor still in the `rl.c` window, type `C-x 0` (zero) to
+  maximize the `*compilation*` window.
+
+(`C-x 1`, which you learned in the tutorial, hides all windows except the
+currently selected one; `C-x 0` does the opposite.)
+
+.do
+  While you're at it, try out `C-x 2` and `C-x 3`. `C-x o` (the letter oh)
+  cycles between windows.
+
+Anyway, back to the `*compilation*` window. Compilation-mode has its own
+special keybindings, of course:
+
+.do
+  Get help on compilation-mode and its keybindings (`C-h m`). Good news: the
+  help for this mode is quite short. Again, don't bother reading the help for
+  all the active minor modes, unless you want to.
+
+.do
+  Try out the keybindings for `compilation-next-error` and
+  `compilation-previous-error`. If `next-error-follow-minor-mode` sounded
+  intriguing, try that out too.
+
+The compilation command is run from the buffer's associated directory; normally
+this is the directory containing the buffer's file. To run `make` on a
+different Makefile, you could specify the `-C` (`--directory`) or `-f`
+(`--makefile`) `make` options; or you can change the buffer's default directory
+with `M-x cd` before `M-x compile`.
+
+
+%h2#rgrep rgrep
+
+To search for all occurrences of a string (or regular expression) in a project,
+use `rgrep`.[[4]] This puts the matches in a new buffer, which you can navigate
+just like the compilation buffer (in fact, grep-mode inherits its functionality
+and keybindings from compilation-mode).
+
+.do
+  Use `rgrep` to search the `readline` source (`*.[ch]` files) for
+  "rl_insert_comment" (make sure you search in the `readline` directory, not in
+  `readline/examples`).
+
+You can control the exact grep command line used: Read the documentation for
+`rgrep` to find out how, or use `grep` or `grep-find` instead. The `C-h f`
+documentation is an adequate reference, but the Info manual (`C-h S rgrep`)
+provides a better introduction.
+
+
+%h2#vc vc
+
+Emacs has a set of commands, all starting with "`vc-`", that provide a
+consistent interface to various version control systems. The `readline` files
+we are using in this tutorial are in a git repository, but the basic commands
+are the same for subversion or cvs. More advanced commands (such as altering
+repository settings, or pushing and pulling to remote repositories in git and
+other distributed vc systems) you will still have to do outside of Emacs.
+
+.do
+  Switch to buffer `rl.c` (with `C-x b`) if necessary.
+
+(If you find yourself missing clickable tabs for switching between buffers,
+remember that `C-x b` is more scalable—it works better when you have hundreds
+of buffers open. [Later on](customize_general.html#ido) we will see how to save
+a lot of typing under `C-x b`.)
+
+.do
+  `rl.c` probably has changes from when we were messing with it earlier. Invoke
+  `vc-revert` to, well, revert it to the latest version in the repository.
+
+Now for argument's sake, let's say we find `rl.c`'s documentation for the "-u"
+command-line flag somewhat confusing:
+
+.do
+  Find (with `C-s`) both instances of the documentation for "-u" and replace
+  the word "unit" with "fd". Save your changes.
+
+.figure
+  .titlebar<
+    \\*vc-diff*
+  .window<
+    :preserve
+      <span class="diff-context">diff --git a/examples/rl.c b/examples/rl.c
+      index 845a4b1..7bfb932 100644
+      </span><span class="diff-header">--- </span><span class="diff-header"><span class="diff-file-header">a/examples/rl.c</span></span><span class="diff-header">
+      +++ </span><span class="diff-header"><span class="diff-file-header">b/examples/rl.c</span></span><span class="diff-header">
+      </span><span class="diff-hunk-header">@@ -2,7 +2,7 @@</span>
+      <span class="diff-context">  * rl - command-line interface to read a line from the standard input
+        *      (or another fd) using readline.
+        *
+      </span><span class="diff-indicator-removed">-</span><span class="diff-removed"> * usage: rl [-p prompt] [-u unit] [-d default] [-n nchars]
+      </span><span class="diff-indicator-added">+</span><span class="diff-added"> * usage: rl [-p prompt] [-u fd] [-d default] [-n nchars]
+      </span><span class="diff-context">  */
+       
+       /* Copyright (C) 1987-2009 Free Software Foundation, Inc.
+      </span><span class="diff-hunk-header">@@ -72,7 +72,7 @@</span><span class="diff-function"> set_deftext ()</span>
+      <span class="diff-context"> static void
+       usage()
+       {
+  .modeline<
+    :preserve
+      --:%*-  <b>*vc-diff*</b>     Top L1     (Diff from rl.c)-----------------------------------
+  .echoarea<
+    You can run the command \`vc-diff' with C-x v =
+
+.do
+  Ask Emacs to show you a diff of this file. (If you need a hint, it's in the
+  first sentence of this section.)
+
+The diff will be shown in diff-mode, which is also used for viewing patch
+files. diff-mode has some useful tricks—read its documentation when you have a
+spare minute.
+
+All the vc commands are bound to key sequences starting with `C-x v`. If you
+were paying attention when you invoked the diff command by its full name, you
+may have noticed that Emacs told you the corresponding keybinding.
+
+.do
+  Press `C-x v C-h` to see all keybindings starting with `C-x v`.
+  -#
+  This also works with any other prefix. Try it with `C-x 4`—you might notice
+  some parallels with keybindings you already know.
+
+To commit the file, look into `C-x v v` (`vc-next-action`). Or enter
+`vc-dir-mode` with `C-x v d` and find out how to mark files, for performing
+`vc-` actions on multiple files at once.
+
+`vc` has a (long!) [section in the Emacs manual](
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Version-Control.html).
+
+Personally, I prefer to use the `gitk` and `git gui` tools, or git's
+command-line interface directly, for adding, staging, committing, reverting,
+merging, branching. But I *do* use the Emacs `vc-diff` and `vc-print-log` (and
+`vc-annotate`!) extensively.
+
+Because `vc` is limited to the common denominator of the backend systems it
+supports, people have written custom modes for specific version control
+systems. `Magit` is one such mode for git; but as we haven't yet learned how to
+install extensions, we'll stick with `vc`. Anyway, `vc` can do a thing or two
+even `magit` doesn't do—have I mentioned `vc-annotate`?
+
+
+%h2#annotate vc-annotate
+
+A couple of sections ago, I asked you to grep the readline sources for
+"rl_insert_comment".
+
+.do
+  Switch to the `*grep*` buffer if you still have it around, or do a new
+  search.
+
+Remember, when switching buffers with `C-x b` you have to enter the asterisks
+as part of the buffer name. (Incidentally, the asterisks are for buffers not
+associated with a file on disk. This is just a convention; you could always
+rename the `*grep*` buffer to something without asterisks —see
+`rename-buffer`— or save it to disk if you wanted to.)
+
+.do
+  The first hit should have been in `emacs_keymap.c`. Jump to that match.
+
+Let's find out which release of readline added the Meta-# keybinding:
+
+.do
+  .figure.wide
+    .titlebar<
+      \\*Annotate emacs_keymap.c (rev master)*
+    .window<
+      :preserve
+        ^06cd36c emacs_keymap.c <span class="vc-annotate-face-3f3fff">  /* The start of printing characters. */
+        </span>f8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, rl_set_mark },           /* Meta-SPACE */
+        </span>f8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, (rl_command_func_t *)0x0 },      /* Meta-! */
+        </span>f8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, (rl_command_func_t *)0x0 },      /* Meta-" */
+        </span><span class="cursor">f</span>8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, rl_insert_comment },     /* Meta-# */
+        </span>
+
+  `M-x vc-annotate`
+  -#
+  Delete all Emacs windows other than the annotate window (you might also want
+  to resize the frame so that it is large enough).
+
+  With point on the "Meta-#" line, press `d` to view the diff of the revision
+  where this line was last changed.
+
+  Now we're in diff-mode. It seems that this revision consisted mostly of
+  whitespace changes. Find the exact change to "Meta-#". You can press `C-c
+  C-w` to hide whitespace-only changes in the hunk surrounding point, and `n`
+  to jump to the next hunk.
+
+  Nope, this revision wasn't it. Press `q` to exit the diff buffer, then `a` to
+  run annotate again, starting from the revision before this line's revision.
+
+  .figure.wide
+    .titlebar<
+      \\*vc-diff*
+    .window<
+      :preserve
+        <span class="diff-context">   { ISFUNC, (Function *)0x0 }, /* Meta-! */
+           { ISFUNC, (Function *)0x0 }, /* Meta-" */
+        </span><span class="diff-removed">-  { ISFUNC, (Function *)0x0 }, /* Meta-# */
+        </span><span class="diff-added">+  { ISFUNC, rl_insert_comment },/* Meta-# */
+        </span><span class="diff-context">   { ISFUNC, (Function *)0x0 }, /* Meta-$ */
+           { ISFUNC, (Function *)0x0 }, /* Meta-% */</span>
+
+  Now make sure your point is on the right line (if the new revision is
+  different enough from the newer one, the line we're interested in may have
+  moved around). Then press `d` again, and in diff-mode `n` until you find the
+  right hunk. Yes, this is the change we're looking for!
+
+  Go back to the annotate buffer (`q`). Press `l` to view the log message for
+  this revision. See, readline's "Meta-#" binding dates back to version 2.1! If
+  you want some context you can press `D` (that's *shift*-d) to view the diff
+  of *all* files changed in this revision.
+
+Of course, annotate is more useful when the commits are more granular and the
+commit messages are more descriptive, with links to bug tracker entries and so
+on. But you get the idea.
+
+Right now I don't expect you to remember all these keybindings, but I do expect
+you to know how to find them when you need them.
+
+
+%h2#ediff ediff
+
+`ediff` is a more powerful mode for viewing differences between files or
+revisions.
+
+.do
+  Switch to buffer rl.c if necessary.
+  -#
+  `M-x ediff-revision`. Accept the default values of rl.c, its latest revision,
+  and its current state.
+
+This opens a new frame from which you control `ediff`; always make sure the
+`ediff` frame has focus when you're giving it a command.
+
+.do
+  Press `?` for help. Figure out how to step through each diff. Figure out how
+  to show the files side-by-side. `q` when you're done.
+
+When invoking `ediff-revision` you can supply any two revisions, not just the
+latest revision and the current working copy. You can also diff any 2 buffers
+(`ediff-buffers`) or files (`ediff-files`).
+
+I suggest you stay away from `ediff-directories` (if you want to know why, try
+using it).
+
+
+%h2#etags etags
+
+`etags` is a program that indexes source files and creates a `TAGS` file that
+Emacs can use to find definitions of variables, functions and types.
+
+.do
+  Run the shell command `make TAGS` in the `readline` directory (either from a
+  `shell` buffer, or with `M-x compile`).
+
+The Makefiles of most open-source projects include the `TAGS` target. For those
+that don't, you can use a combination of `find`, `xargs` and `etags` from the
+shell to generate the `TAGS` file manually (read the man pages for those tools
+if you need to).
+
+The `etags` you just ran was probably the one that shipped with Emacs. There's
+an alternate implementation called ["Exuberant ctags"](
+http://ctags.sourceforge.net/) that supports more languages. Install it with
+your package manager (e.g. `port` or `yum install ctags`) and call it with
+`ctags -e`.
+
+.do
+  Back in Emacs, invoke `find-tag` (`M-.`). Enter `rl_insert_comment` as the
+  tag to find, and then the location of the `TAGS` file you just generated.
+
+.do
+  From the help for `find-tag`, figure out how to jump back to the location you
+  were at before invoking the command, and how to find the next match if there
+  is more than one. (You might find the documentation from `C-h S find-tag`
+  clearer than that from `C-h f`.)
+
+To use a different `TAGS` file `visit-tags-table`.
+
+If you're a C++ programmer, you'll soon find that `ctags`/`etags` is not
+perfect when it comes to classes and namespaces. As a 90% solution, it's good
+enough, most of the time. Hopefully someone will come up with a [clang](
+http://clang.llvm.org/)-based indexer sometime soon.
+
+
+%h2#gdb gdb
+
+We're going to run the `rl` program under the GNU debugger, gdb.
+
+.do
+  First run `compile` in `readline` and then in `readline/examples`.
+
+The compilation should succeed,[[5]] as long as you haven't introduced any errors
+in any of the source files. If you have, you know how to view and back out your
+changes.
+
+.do
+  `M-x gdb`. When prompted for the command-line to use, specify the program
+  `examples/rl` as an argument to `gdb`: if you're in the `readline/examples`
+  directory, the command-line will look like `gdb ‑‑annotate=3 ./rl`.
+
+You are now running `gdb` inside Emacs, so the standard `gdb` commands apply.
+Let's set a breakpoint in the `readline` function, start the `rl` program, and
+when we reach the breakpoint step through a few lines.
+
+.do
+  Type the following commands at the `gdb` prompt:
+  -#
+  `break readline`  
+  `run`  
+  `print rl_pending_input`  
+  `next`  
+  `step`  
+  `backtrace`  
+  `frame 1`
+
+Note how Emacs displays the corresponding source file and line in a separate
+window.
+
+The above commands are all interpreted directly by the `gdb` program. `gdb`
+allows you to abbreviate them to `r`, `p`, `n`, `s`, `bt`, and `f`,
+respectively. Pressing return on an empty line repeats the previous
+command—useful for multiple `next` commands. `help` displays `gdb`'s built-in
+help.
+
+For serious debugging, Emacs can open additional windows showing the current
+stack frames, breakpoints, local variables and registers. See the Emacs manual
+for details: `C-h r` opens the Emacs manual in the Info browser, then search
+for the chapter titled "GDB Graphical Interface".
+
+
+%h2#homework Homework
+
+You may be feeling somewhat overwhelmed at this point. Spend a few days using
+Emacs as your main editor, painful though it may be, before moving on to the
+next chapter of this guide. If you've forgotten a command I've taught you, try
+to figure it out yourself (use `C-h m`, `C-h a`, `C-h f`, `C-h k` and `C-h S`)
+before looking it up here.
+
+As part of your commitment to learning Emacs, try to run your shell within
+Emacs as much as possible. (If you need help configuring your shell to work
+well within Emacs, or configuring Emacs to work well with your shell, we will
+revisit shell-mode in the ["General customization" chapter](
+customize_general.html#shell) of this guide.)
+
+
+#footnotes
+  [[1]]:
+  You will need `git`, a source control system; the Git Book has [installation
+  instructions]( http://book.git-scm.com/2_installing_git.html).
+
+  [[2]]:
+  On Windows you will need a shell provided by Cygwin or similar.
+
+  [[3]]:
+  These keybindings aren't arbitrary. `C-c C-s` mirrors `C-x C-s`, which you
+  already know for saving the entire buffer to a file ("global" keybindings
+  tend to start with `C-x`, whereas `C-c` is a prefix for mode-specific
+  bindings). And `C-M-l` performs a similar function in other editing modes—in
+  c-mode it tries to bring into view the whole function surrounding the point.
+  If you're feeling overwhelmed by the number of keybindings to memorize, don't
+  worry; you can always find them again with `C-h m`.
+
+  [[4]]:
+  On Windows you will need `find` and `grep` commands provided by Cygwin or
+  similar.
+
+  [[5]]:
+  I haven't tested this on Windows, but I'm assuming that Cygwin installs the
+  necessary compiler, headers and libraries.

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Info documentation
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li class='current'>9. Info documentation
+    <ul>
+      <li><a href="#path">Info file search path</a></li>
+      <li><a href="#glibc">glibc</a></li>
+      <li><a href="#python">Python</a></li>
+      <li><a href="#perl">Perl</a></li>
+    </ul>
+  </li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Info documentation</h1>
+<h2 id='path'>Info file search path</h2>
+<p>The <a href="http://www.gnu.org/software/texinfo/manual/info/html_node/Emacs-Info-Variables.html">Info manual</a>
+tells us about variable <code>Info-default-directory-list</code>:</p>
+<div class='do'>
+  <div class='window'>(<span class="keyword">eval-after-load</span> 'info&#x000A;  '(<span class="keyword">progn</span>&#x000A;     (push <span class="string">"/opt/local/share/info"</span> Info-default-directory-list)&#x000A;     (push <span class="string">"~/.emacs.d/info"</span> Info-default-directory-list)))&#x000A;</div>
+</div>
+<p>The first is the directory for info files installed by my package manager
+(macports); modify the path according to your own system. The second directory
+is where we&rsquo;ll install info files manually.</p>
+<h2 id='glibc'>glibc</h2>
+<p><a href="http://www.gnu.org/software/libc/"><code>glibc</code></a> (&ldquo;gee lib cee&rdquo;) is the GNU
+implementation of <code>libc</code>, the Unix standard C library. Don&rsquo;t confuse it with
+<code>glib</code>, which is a library from the GNOME desktop project.</p>
+
+<p>If you&rsquo;re not developing for a GNU/Linux system, but you don&rsquo;t find
+<code>info</code>-format documentation for your system&rsquo;s own <code>libc</code>, you might still find
+the GNU docs useful. <code>glibc</code> follows the ISO C 99 and POSIX standards, and its
+documentation is always careful to point out where a feature is non-standard.
+Common Unix variations are covered (e.g. the BSD and SysV styles of signal
+handling).</p>
+<div class='do'>
+  <p>Download &ldquo;Info document (gzipped tar file)&rdquo; from <a href="http://www.gnu.org/software/libc/manual/">the GNU website</a>.</p>
+  
+  <p>Untar into <code>~/.emacs.d/info/</code></p>
+  
+  <p><code>cd ~/.emacs.d/info</code><br/>
+  <code>install-info libc.info dir</code></p>
+</div>
+<p><code>install-info</code> is provided by the texinfo package, which you can install with
+your system&rsquo;s package manager.</p>
+
+<p>The generated <code>dir</code> file contains an entry for every function and constant in
+libc. These entries are added to your top-level Info menu. It is easy to remove
+these from the top-level menu (you will still be able to find them via Info&rsquo;s
+<code>i</code>ndex command or by searching): The <code>dir</code> file is plain text, so you can edit
+it and remove those entries. Leave the single libc entry under &ldquo;Libraries&rdquo;.</p>
+
+<p>Now visit a C file and use <code>info-lookup-symbol</code> to look up, say, <code>socket</code>. Go
+<code>u</code>p to the main sockets node for introductory material.</p>
+<h2 id='python'>Python</h2>
+<p>Install <a href="https://bitbucket.org/jonwaltman/pydoc-info/src/default/pydoc-info.el">pydoc-info.el</a> (we
+covered elisp package installation in a <a href="customize_colours.html#packages">previous chapter</a>) and follow the instructions under &ldquo;Setup and
+Install&rdquo; in <a href="https://bitbucket.org/jonwaltman/pydoc-info">pydoc-info&rsquo;s README</a>.</p>
+<h2 id='perl'>Perl</h2>
+<p>I&rsquo;ve found <a href="http://www.cpan.org/doc/manual/texinfo/perl5/">info docs for perl 5.6</a> (over a decade old now). If you
+know of a more recent version, or know how to build info files from the latest
+perl docs, please send me detailed instructions.</p>
+
+<p>And spread the word! It&rsquo;s a shame that such a well-integrated documentation
+system hasn&rsquo;t received more support from popular software distributions.</p>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='contribute_emacs.html'>Next: Contributing to Emacs</a></p>
+    </div>
+  </body>
+</html>

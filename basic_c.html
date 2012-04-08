@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: Basic Unix/C workflow
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li class='current'>5. Basic Unix/C workflow
+    <ul>
+      <li><a href="#c">c-mode</a></li>
+      <li><a href="#shell">shell</a></li>
+      <li><a href="#eshell">eshell</a></li>
+      <li><a href="#term">ansi-term</a></li>
+      <li><a href="#shell-command">shell-command</a></li>
+      <li><a href="#sh">sh-mode</a></li>
+      <li><a href="#infodoc">Info documentation</a></li>
+      <li><a href="#compile">compile</a></li>
+      <li><a href="#rgrep">rgrep</a></li>
+      <li><a href="#vc">vc</a></li>
+      <li><a href="#annotate">vc-annotate</a></li>
+      <li><a href="#ediff">ediff</a></li>
+      <li><a href="#etags">etags</a></li>
+      <li><a href="#gdb">gdb</a></li>
+      <li><a href="#homework">Homework</a></li>
+    </ul>
+  </li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li><a href='customize_c.html'>6. cc-mode customization</a></li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>Basic Unix/C workflow</h1>
+<p>This chapter uses the source code of the GNU Readline library as an example.
+You can grab it (by <code>cd</code>ing to a directory of your choice and then issuing the
+shell command <code>git clone git://git.savannah.gnu.org/readline.git</code><a id='fnref1' href='#fn1' class='footnote'>[1]</a>) or
+follow along using your own C or C++ code.</p>
+<h2 id='c'>c-mode</h2>
+
+<div class='do'>
+  <p>Start Emacs and open (<code><a class='glossary' href='glossary.html#keys'>C-x C-f</a></code>) the file <code>readline/examples/rl.c</code>.</p>
+</div>
+<div class='figure' id='minibuffer'>
+  <div class='window'><p>&nbsp;</p></div>
+  <div class='modeline'>-U:---  <b>*scratch*</b>      All L1      (Lisp Interaction)----------------------------------------</div>
+  <div class='echoarea'><p><span class="prompt">Find file:</span> .../readline/examples/rl.c</p></div>
+  <p>The minibuffer</p>
+  
+</div>
+<p>If you accidentally invoke <code><a class='glossary' href='glossary.html#keys'>C-x C-f</a></code> again, or any other command that is
+expecting some kind of input from you, remember you can cancel by making sure
+the <a class='glossary' href='glossary.html#minibuffer'>minibuffer</a> has focus and pressing <code><a class='glossary' href='glossary.html#keys'>C-g</a></code>.</p>
+
+<p>Because this is a C source file, Emacs has automatically activated an editing
+mode called &ldquo;c-mode&rdquo;, which provides some custom keybindings and knowledge of C
+indentation rules and syntax highlighting. We will study c-mode in depth <a href="customize_c.html">later
+on</a>.</p>
+<h2 id='shell'>shell</h2>
+
+<div class='do'>
+  <p>Run the <code>shell</code> command (that is, <code><a class='glossary' href='glossary.html#keys'>M-x shell RET</a></code>).</p>
+</div>
+<p>This creates a new <a class='glossary' href='glossary.html#buffers'>buffer</a> running the shell specified by environment variable
+SHELL.<a id='fnref2' href='#fn2' class='footnote'>[2]</a> The <a class='glossary' href='glossary.html#buffers'>buffer</a> is called <code>*shell*</code> (the asterisks are part of the name,
+so you have to type them when switching to this <a class='glossary' href='glossary.html#buffers'>buffer</a> with <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code>).</p>
+<div class='do'>
+  <p><code>cd</code> to the <code>readline</code> directory and run the following shell commands:</p>
+  <p><code>./configure</code><br/>
+  <code>make</code></p>
+</div>
+<p>The <code>*shell*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>&rsquo;s <a class='glossary' href='glossary.html#majormode'>editing mode</a> is <code>shell-mode</code>. You can run almost any
+shell command inside shell-mode; the exceptions are anything that requires real
+terminal support, like pagers (<code>less</code>) and curses-based programs. You lose
+bash&rsquo;s readline completion and any custom bash-completion scripts, or the
+equivalent in your shell of choice (though Emacs provides its own command
+history and tab-completion). For these reasons, I tend to have a real terminal
+running (outside of Emacs) for some tasks, as well as a shell in Emacs. (Trying
+to do <em>everything</em> in Emacs reaches a point of diminishing returns.)</p>
+
+<p>The big advantage of <code>shell-mode</code> is that all output is available for you to
+search through, copy, paste, and otherwise act upon, all with the standard
+Emacs commands; you don&rsquo;t have to move your hand to the mouse just to select
+some text.</p>
+
+<p>Shell-mode adds a number of keybindings:</p>
+<div class='figure'>
+  <div class='titlebar'><p>.../examples/rl.c</p></div>
+  <div class='window default'>gcc version 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.1.00)&#x000A;/usr/llvm-gcc-4.2/bin/../libexec/gcc/i686-apple-darwin11/4.2.1/collect2 <span class="comment">-dynamic</span> <span class="comment">-dylib</span> <span class="comment">-dylib_compatibility_version</span> 6&#x000A;<span class="comment">-dylib_current_version</span> 6.2 <span class="comment">-arch</span> x86_64 <span class="comment">-dylib_install_name</span> /usr/local/lib/libhistory.6.2.dylib&#x000A;<span class="comment">-dynamic</span> <span class="comment">-macosx_version_min</span> 10.3 <span class="comment">-undefined</span> dynamic_lookup <span class="comment">-weak_referen&#x000A;ce_mismatches</span> non-weak <span class="comment">-undefined</span> dynamic_lookup <span class="comment">-o</span> libhistory.6.2.dylib <span class="comment">-ldylib1.o</span> <span class="comment">-L/us&#x000A;r/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/x86_64</span> <span class="comment">-L/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/x86_64</span>&#x000A;&#x000A;<span class="comint-highlight-prompt">readline$ </span><span class="cursor"> </span>&#x000A;&nbsp;</div>
+  <div class='modeline'>--:---  <b>*shell*</b>        Bot L404   (Shell:run)------------------------------</div>
+  <div class='window default'><span class="bold">Shell</span> mode:&#x000A;<a class='glossary' href='glossary.html#majormode'>Major mode</a> for interacting with an inferior shell.&#x000A;RET after the end of the process' output sends the text from&#x000A;    the end of process to the end of the current line.&#x000A;RET before end of process output copies the current line minus the prompt to&#x000A;    the end of the <a class='glossary' href='glossary.html#buffers'>buffer</a> and sends it (C-c RET just copies the current line).&#x000A;M-x <span class="button">send-invisible</span> reads a line of text without echoing it, and sends it to&#x000A;    the shell.  This is useful for entering passwords.  Or, add the function&#x000A;    `<span class="button">comint-watch-for-password-prompt</span>' to `<span class="button">comint-output-filter-functions</span>'.</div>
+  <div class='modeline'>-U:%%-  <b>*Help*</b>         Top L1     (Help View)------------------------------</div>
+  <div class='echoarea'><p>Type C-x 1 to delete the help <a class='glossary' href='glossary.html#windows'>window</a>, C-M-v to scroll help.</p></div>
+  <p>The Help window</p>
+  
+</div>
+<div class='do'>
+  <p>Type <code><a class='glossary' href='glossary.html#keys'>C-h m</a></code> and read the documentation on shell-mode and its keybindings.</p>
+</div>
+<p>(For now, don&rsquo;t bother reading the help text about customization—the variables
+and hooks shell-mode provides to modify its behavior. After shell-mode comes
+documentation for all the active <a class='glossary' href='glossary.html#minormode'>minor modes</a>; you don&rsquo;t need to read that
+either.)</p>
+
+<p>Of particular interest are pressing <code>RET</code> or <code><a class='glossary' href='glossary.html#keys'>C-c RET</a></code> on a previous input
+line; <code>C-&lt;up&gt;</code> and <code>C-&lt;down&gt;</code> (or <code><a class='glossary' href='glossary.html#keys'>M-p</a></code> and <code><a class='glossary' href='glossary.html#keys'>M-n</a></code>) to cycle through previous
+commands; and <code><a class='glossary' href='glossary.html#keys'>M-x dirs</a></code>.</p>
+<div class='do'>
+  <p>Figure out how to send signals (e.g. C-c) to the shell. (Hint: search the
+  help <a class='glossary' href='glossary.html#buffers'>buffer</a> for &ldquo;interrupt&rdquo; and &ldquo;stop&rdquo;.)</p>
+</div>
+<div class='do'>
+  <p>Figure out what <code><a class='glossary' href='glossary.html#keys'>C-M-l</a></code> (that&rsquo;s the letter ell) and <code><a class='glossary' href='glossary.html#keys'>C-c C-s</a></code> do (these are
+  both useful after running a shell command that produces a lot of
+  output).<a id='fnref3' href='#fn3' class='footnote'>[3]</a></p>
+</div>
+<h2 id='eshell'>eshell</h2>
+<p>If you&rsquo;re not particularly wedded to bash or any other shell, instead of
+<code>shell</code> you might consider using <code>eshell</code>, a shell totally implemented in Emacs
+lisp. Among other advantages, running eshell on Windows doesn&rsquo;t require Cygwin;
+you can enter lisp code or any Emacs command by name directly at the shell
+prompt; and you can redirect command output to the Emacs clipboard or to any
+open Emacs <a class='glossary' href='glossary.html#buffers'>buffer</a>.</p>
+
+<p>I don&rsquo;t use eshell myself, but many do. For now it might be simplest to stick
+with the shell you know (running inside Emacs).</p>
+<h2 id='term'>ansi-term</h2>
+<p>The final option for running a shell under Emacs is <code>ansi-term</code>. This is a full
+terminal emulator, and it will pass most key presses directly to the program
+running in the terminal. This includes <code>TAB</code>, so it will be the shell, not
+Emacs, performing tab-completion for you.</p>
+
+<p><code><a class='glossary' href='glossary.html#keys'>C-x</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-c</a></code> are still processed by Emacs; for <code><a class='glossary' href='glossary.html#keys'>M-x</a></code> you&rsquo;ll have to type
+<code><a class='glossary' href='glossary.html#keys'>C-x M-x</a></code>. You <em>can</em> switch from &ldquo;raw&rdquo; character mode to &ldquo;line&rdquo; mode to get
+normal Emacs behavior back (e.g. for moving the cursor around so you can copy
+some previous output); nothing will be sent to the terminal until you press
+return.</p>
+
+<p>To find out how, you can&rsquo;t use <code><a class='glossary' href='glossary.html#keys'>C-h m</a></code> because <code><a class='glossary' href='glossary.html#keys'>C-h</a></code> is passed to the shell
+(where it probably means backspace). Instead of <code><a class='glossary' href='glossary.html#keys'>C-h</a></code> use <code>&lt;f1&gt;</code>, or invoke
+<code>describe-mode</code> by name.</p>
+<h2 id='shell-command'>shell-command</h2>
+<p>To run a one-off shell command without opening a full shell <a class='glossary' href='glossary.html#buffers'>buffer</a>, use
+<code>shell-command</code> (<code>M-!</code>).</p>
+<div class='do'>
+  <p><code>M-! date RET</code></p>
+</div>
+<p><code>shell-command-on-region</code> (<code><a class='glossary' href='glossary.html#keys'>M-|</a></code>) is similar but sends the current region to
+the shell command&rsquo;s standard input. Let&rsquo;s use it to calculate the line count
+of <code>rl.c</code>&rsquo;s <code>main</code> function:</p>
+<div class='do'>
+  <p>Switch to <a class='glossary' href='glossary.html#buffers'>buffer</a> <code>rl.c</code> (with <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code>).</p>
+  <p>Move <a class='glossary' href='glossary.html#region'>the point</a> to the <code>main</code> function (by searching with <code><a class='glossary' href='glossary.html#keys'>C-s</a></code>).
+  Now move <a class='glossary' href='glossary.html#region'>the point</a> so that it is directly on the <code>main</code> function&rsquo;s opening
+  <code>{</code> bracket.</p>
+  
+  <p>Press <code><a class='glossary' href='glossary.html#keys'>C-SPC</a></code> to set <a class='glossary' href='glossary.html#region'>the mark</a>.</p>
+  
+  <p>Press <code><a class='glossary' href='glossary.html#keys'>C-M-f</a></code> to move point forward to the matching <code>}</code> bracket. <a class='glossary' href='glossary.html#region'>The region</a>
+  (the area between <a class='glossary' href='glossary.html#region'>the mark</a> and <a class='glossary' href='glossary.html#region'>the point</a>) now covers the full body of <code>main</code>.</p>
+  
+  <p><code><a class='glossary' href='glossary.html#keys'>M-| wc -l RET</a></code></p>
+</div>
+<div class='window default'><div class="region">  printf (<span class="string">"%s\n"</span>, temp);&#x000A;  exit (0);&#x000A;}</div>&#x000A;</div>
+<div class='modeline'>--:---  <b>rl.c</b>          Bot L158  Git-master  (C/l Abbrev)-----------------------------------</div>
+<div class='echoarea'><p><span class="prompt">Shell command on region:</span> wc -l<span class="cursor"> </span></p></div>
+<p>If you forget the names of these commands, type <code><a class='glossary' href='glossary.html#keys'>M-x shell TAB TAB</a></code>.</p>
+<div class='do'>
+  <p>Read the help for <code>shell-command-on-region</code>. You can look it up by keybinding
+  (<code><a class='glossary' href='glossary.html#keys'>C-h k</a></code>) or by function name (<code><a class='glossary' href='glossary.html#keys'>C-h f</a></code>).</p>
+</div>
+<p>The help for this one is pretty long, but the important information is near the
+top. Ignore the paragraph on coding systems, and everything about
+noninteractive arguments (which are for calling this function from lisp
+scripts, as opposed to interactively like we have been doing).</p>
+
+<p>The sentence &ldquo;Prefix arg means replace <a class='glossary' href='glossary.html#region'>the region</a> with [the output of the shell
+command]&rdquo; refers to providing a numeric argument to the command. You&rsquo;ll
+remember numeric arguments from the tutorial. In this case the value of the
+argument doesn&rsquo;t matter, so <code><a class='glossary' href='glossary.html#keys'>M-2 C-M-|</a></code> or <code><a class='glossary' href='glossary.html#keys'>C-u C-M-|</a></code> will do.</p>
+<div class='do'>
+  <p>Try it!</p>
+</div>
+<div class='figure'>
+  <div class='window'><p>&nbsp;</p></div>
+  <div class='modeline'>--:<span class="notethis">**</span>-  <b>rl.c</b>          Bot L158  Git-master  (C/l Abbrev)-----------------------------------</div>
+  <div class='echoarea'></div>
+  <p>Unsaved modifications indicator</p>
+</div>
+<div class='do'>
+  <p>And now undo (<code><a class='glossary' href='glossary.html#keys'>C-/</a></code>) what you&rsquo;ve done to the <a class='glossary' href='glossary.html#buffers'>buffer</a>. Note the <a class='glossary' href='glossary.html#modeline'>modeline</a>
+  indicator when the <a class='glossary' href='glossary.html#buffers'>buffer</a> has unsaved modifications.</p>
+</div>
+<h2 id='sh'>sh-mode</h2>
+
+<div class='do'>
+  <p>Open the file <code>readline/configure</code>.</p>
+</div>
+<p>If you are not particularly comfortable with shell scripting, I apologize for
+dumping you into a 12,000-line programmatically-generated script, but it&rsquo;s the
+closest one I had for an example.</p>
+
+<p>The mode for editing shell scripts is <code>sh-mode</code> (as opposed to <code>shell-mode</code> for
+running an interactive shell session, which we&rsquo;ve seen already). If Emacs
+didn&rsquo;t figure out that the file is a shell script (perhaps it&rsquo;s missing the
+hash-bang interpreter directive on the first line) you can enter <code>sh-mode</code>
+with, you guessed it, <code><a class='glossary' href='glossary.html#keys'>M-x sh-mode</a></code>.</p>
+
+<p>I don&rsquo;t really have much to say about <code>sh-mode</code>. It will do syntax highlighting
+and indentation for a variety of shells; and it provides keybindings to run the
+script, and to insert certain shell constructs (<code>case</code> statements, <code>for</code> loops,
+etc.) with the correct syntax for the current shell. If Emacs gets it wrong
+(again with the missing hash-bang!) you can tell Emacs which shell to use.</p>
+
+<p>By now you know where to find out how.</p>
+<h2 id='infodoc'>Info documentation</h2>
+
+<div class='do'>
+  <p>Back in the <code>configure</code> script, invoke <code>info-lookup-symbol</code> and when prompted
+  enter <code>test</code>.</p>
+</div>
+<p>Assuming that the Info documentation for the <code>bash</code> shell is correctly
+installed on your system (which should be the case for any Linux or OS X
+system, at least) you will see an Info <a class='glossary' href='glossary.html#windows'>window</a> showing the <code>bash</code> manual at
+the very line for the <code>test</code> command.</p>
+<div class='do'>
+  <p>Follow the link to &ldquo;Bash Conditional Expressions&rdquo;. If you don&rsquo;t want to use
+  the mouse, <code>TAB</code> moves <a class='glossary' href='glossary.html#region'>the point</a> to the next link and <code>RET</code> does the obvious
+  thing.</p>
+</div>
+<p>As usual, <code><a class='glossary' href='glossary.html#keys'>C-h m</a></code> will show all the keybindings for <code>info</code> mode. For once,
+though, don&rsquo;t bother remembering all the keybindings, nor reading through the
+rather tedious Info tutorial. All you need to know is:</p>
+
+<ul>
+<li><code>SPC</code> and <code>DEL</code> for scrolling; when you get to the end of a &ldquo;node&rdquo; (a page or
+section), pressing <code>SPC</code> again goes to the next node in the sequence. I must
+warn you, <code>DEL</code> is sometimes buggy when you reach the first node in a chapter.</li>
+<li><code>l</code> (the letter ell) moves back in history.</li>
+<li><code>u</code> or <code>^</code> moves up to the nearest enclosing table of contents. Pressing <code>u</code>
+repeatedly will get you to the main Info directory containing all the Info
+manuals found on your system. (The Emacs-related manuals are also available <a href="http://www.gnu.org/software/emacs/manual/">on
+the web</a>.)</li>
+<li>Use the usual mechanisms for searching (<code><a class='glossary' href='glossary.html#keys'>C-s</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-r</a></code>); when you reach the
+end of a node, pressing <code><a class='glossary' href='glossary.html#keys'>C-s</a></code> again will continue searching through the rest of
+the manual.</li>
+</ul>
+
+
+<p>As you can see from the Info directory, there are many Info manuals, including
+manuals for Emacs itself, an Emacs Lisp reference and intro, and manuals for
+the more complex Emacs <a class='glossary' href='glossary.html#majormode'>editing modes</a> like <code>cc-mode</code>.</p>
+
+<p>I can&rsquo;t overstate how useful the Info documentation is. If you&rsquo;re maintaining a
+Makefile you can look up the meaning of esoteric symbols like <code>$@</code>. Need to do
+some socket programming? In a <a href="info.html">later chapter</a> we will install the
+Info manuals for glibc (the GNU implementation of the Unix standard library).</p>
+
+<p><code>info-lookup-symbol</code> uses the mode of the current <a class='glossary' href='glossary.html#buffers'>buffer</a> to determine which
+manual to look in. Sometimes it can&rsquo;t tell, so it will prompt you: Enter
+<code>sh-mode</code> or <code>makefile-mode</code> or <code>c-mode</code> or whatever (<code>TAB</code> to show all
+possible options). With a <code><a class='glossary' href='glossary.html#keys'>C-u</a></code> prefix, <code>info-lookup-symbol</code> will always ask.</p>
+<h2 id='compile'>compile</h2>
+
+<div class='do'>
+  <p>Switch to <a class='glossary' href='glossary.html#buffers'>buffer</a> <code>rl.c</code> (with <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code>) if necessary.</p>
+  <p>Move <a class='glossary' href='glossary.html#region'>the point</a> to the <code>main</code> function (by searching with <code><a class='glossary' href='glossary.html#keys'>C-s</a></code>).
+  Introduce a deliberate compilation error just after <code>main</code>&rsquo;s opening <code>{</code>
+  bracket, as in the example below, and save your change.</p>
+  
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x compile</a></code> (and accept the default shell command of <code>make -k</code>).</p>
+</div>
+<div class='titlebar'><p>rl.c</p></div>
+<div class='window default'><span class="type">int</span>&#x000A;<span class="function-name">main</span> (argc, argv)&#x000A;     <span class="type">int</span> <span class="variable-name">argc</span>;&#x000A;     <span class="type">char</span> **<span class="variable-name">argv</span>;&#x000A;{&#x000A;  <b>failhere</b><span class="cursor">&nbsp;</span>&#x000A;  <span class="type">char</span> *<span class="variable-name">temp</span>, *<span class="variable-name">prompt</span>;&#x000A;  <span class="keyword">struct</span> <span class="type">stat</span> <span class="variable-name">sb</span>;&#x000A;  <span class="type">int</span> <span class="variable-name">opt</span>, <span class="variable-name">fd</span>, <span class="variable-name">nch</span>;&#x000A;  <span class="type">FILE</span> *<span class="variable-name">ifp</span>;</div>
+<div class='modeline'>--:---  <b>rl.c</b>          59% L84   Git-master  (C/l Abbrev)-----------------------------------</div>
+<div class='window default'>make -k&#x000A;rm -f rl.o&#x000A;gcc -DHAVE_CONFIG_H -DREADLINE_LIBRARY -DRL_LIBRARY_VERSION='"6.2"'  -I. -I.. -I.. -g -O -c rl.c&#x000A;<span class="function-name">rl.c</span>: In function &#8216;main&#8217;:&#x000A;<span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">84</span></span><span class="underline">: </span>error: &#8216;failhere&#8217; undeclared (first use in this function)&#x000A;<span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">84</span></span><span class="underline">: </span>error: (Each undeclared identifier is reported only once&#x000A;<span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">84</span></span><span class="underline">: </span>error: for each function it appears in.)&#x000A;<span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">85</span></span><span class="underline">: </span>error: expected &#8216;;&#8217; before &#8216;char&#8217;&#x000A;<span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">97</span></span><span class="underline">: </span>error: &#8216;prompt&#8217; undeclared (first use in this function)&#x000A;<span class="underline"><span class="compilation-error">rl.c</span></span><span class="underline">:</span><span class="underline"><span class="compilation-line-number">150</span></span><span class="underline">: </span>error: &#8216;temp&#8217; undeclared (first use in this function)</div>
+<div class='modeline'>-U:%*-  <b>*compilation*</b>   Top L1     (Compilation<span class="error">:exit [2]</span>)-----------------------------------</div>
+<div class='echoarea'><p>Compilation exited abnormally with code 2</p></div>
+<div class='do'>
+  <p>With the active cursor still in the <code>rl.c</code> <a class='glossary' href='glossary.html#windows'>window</a>, type <code><a class='glossary' href='glossary.html#keys'>C-x 0</a></code> (zero) to
+  maximize the <code>*compilation*</code> <a class='glossary' href='glossary.html#windows'>window</a>.</p>
+</div>
+<p>(<code><a class='glossary' href='glossary.html#keys'>C-x 1</a></code>, which you learned in the tutorial, hides all <a class='glossary' href='glossary.html#windows'>windows</a> except the
+currently selected one; <code><a class='glossary' href='glossary.html#keys'>C-x 0</a></code> does the opposite.)</p>
+<div class='do'>
+  <p>While you&rsquo;re at it, try out <code><a class='glossary' href='glossary.html#keys'>C-x 2</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-x 3</a></code>. <code><a class='glossary' href='glossary.html#keys'>C-x o</a></code> (the letter oh)
+  cycles between <a class='glossary' href='glossary.html#windows'>windows</a>.</p>
+</div>
+<p>Anyway, back to the <code>*compilation*</code> <a class='glossary' href='glossary.html#windows'>window</a>. Compilation-mode has its own
+special keybindings, of course:</p>
+<div class='do'>
+  <p>Get help on compilation-mode and its keybindings (<code><a class='glossary' href='glossary.html#keys'>C-h m</a></code>). Good news: the
+  help for this mode is quite short. Again, don&rsquo;t bother reading the help for
+  all the active <a class='glossary' href='glossary.html#minormode'>minor modes</a>, unless you want to.</p>
+</div>
+<div class='do'>
+  <p>Try out the keybindings for <code>compilation-next-error</code> and
+  <code>compilation-previous-error</code>. If <code>next-error-follow-minor-mode</code> sounded
+  intriguing, try that out too.</p>
+</div>
+<p>The compilation command is run from the <a class='glossary' href='glossary.html#buffers'>buffer</a>&rsquo;s associated directory; normally
+this is the directory containing the <a class='glossary' href='glossary.html#buffers'>buffer</a>&rsquo;s file. To run <code>make</code> on a
+different Makefile, you could specify the <code>-C</code> (<code>--directory</code>) or <code>-f</code>
+(<code>--makefile</code>) <code>make</code> options; or you can change the <a class='glossary' href='glossary.html#buffers'>buffer</a>&rsquo;s default directory
+with <code><a class='glossary' href='glossary.html#keys'>M-x cd</a></code> before <code><a class='glossary' href='glossary.html#keys'>M-x compile</a></code>.</p>
+<h2 id='rgrep'>rgrep</h2>
+<p>To search for all occurrences of a string (or regular expression) in a project,
+use <code>rgrep</code>.<a id='fnref4' href='#fn4' class='footnote'>[4]</a> This puts the matches in a new <a class='glossary' href='glossary.html#buffers'>buffer</a>, which you can navigate
+just like the compilation <a class='glossary' href='glossary.html#buffers'>buffer</a> (in fact, grep-mode inherits its functionality
+and keybindings from compilation-mode).</p>
+<div class='do'>
+  <p>Use <code>rgrep</code> to search the <code>readline</code> source (<code>*.[ch]</code> files) for
+  &ldquo;rl_insert_comment&rdquo; (make sure you search in the <code>readline</code> directory, not in
+  <code>readline/examples</code>).</p>
+</div>
+<p>You can control the exact grep command line used: Read the documentation for
+<code>rgrep</code> to find out how, or use <code>grep</code> or <code>grep-find</code> instead. The <code><a class='glossary' href='glossary.html#keys'>C-h f</a></code>
+documentation is an adequate reference, but the Info manual (<code><a class='glossary' href='glossary.html#keys'>C-h S rgrep</a></code>)
+provides a better introduction.</p>
+<h2 id='vc'>vc</h2>
+<p>Emacs has a set of commands, all starting with &ldquo;<code>vc-</code>&rdquo;, that provide a
+consistent interface to various version control systems. The <code>readline</code> files
+we are using in this tutorial are in a git repository, but the basic commands
+are the same for subversion or cvs. More advanced commands (such as altering
+repository settings, or pushing and pulling to remote repositories in git and
+other distributed vc systems) you will still have to do outside of Emacs.</p>
+<div class='do'>
+  <p>Switch to <a class='glossary' href='glossary.html#buffers'>buffer</a> <code>rl.c</code> (with <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code>) if necessary.</p>
+</div>
+<p>(If you find yourself missing clickable tabs for switching between <a class='glossary' href='glossary.html#buffers'>buffers</a>,
+remember that <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code> is more scalable—it works better when you have hundreds
+of <a class='glossary' href='glossary.html#buffers'>buffers</a> open. <a href="customize_general.html#ido">Later on</a> we will see how to save
+a lot of typing under <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code>.)</p>
+<div class='do'>
+  <p><code>rl.c</code> probably has changes from when we were messing with it earlier. Invoke
+  <code>vc-revert</code> to, well, revert it to the latest version in the repository.</p>
+</div>
+<p>Now for argument&rsquo;s sake, let&rsquo;s say we find <code>rl.c</code>&rsquo;s documentation for the &ldquo;-u&rdquo;
+command-line flag somewhat confusing:</p>
+<div class='do'>
+  <p>Find (with <code><a class='glossary' href='glossary.html#keys'>C-s</a></code>) both instances of the documentation for &ldquo;-u&rdquo; and replace
+  the word &ldquo;unit&rdquo; with &ldquo;fd&rdquo;. Save your changes.</p>
+</div>
+<div class='figure'>
+  <div class='titlebar'><p>*vc-diff*</p></div>
+  <div class='window'><span class="diff-context">diff --git a/examples/rl.c b/examples/rl.c&#x000A;index 845a4b1..7bfb932 100644&#x000A;</span><span class="diff-header">--- </span><span class="diff-header"><span class="diff-file-header">a/examples/rl.c</span></span><span class="diff-header">&#x000A;+++ </span><span class="diff-header"><span class="diff-file-header">b/examples/rl.c</span></span><span class="diff-header">&#x000A;</span><span class="diff-hunk-header">@@ -2,7 +2,7 @@</span>&#x000A;<span class="diff-context">  * rl - command-line interface to read a line from the standard input&#x000A;  *      (or another fd) using readline.&#x000A;  *&#x000A;</span><span class="diff-indicator-removed">-</span><span class="diff-removed"> * usage: rl [-p prompt] [-u unit] [-d default] [-n nchars]&#x000A;</span><span class="diff-indicator-added">+</span><span class="diff-added"> * usage: rl [-p prompt] [-u fd] [-d default] [-n nchars]&#x000A;</span><span class="diff-context">  */&#x000A; &#x000A; /* Copyright (C) 1987-2009 Free Software Foundation, Inc.&#x000A;</span><span class="diff-hunk-header">@@ -72,7 +72,7 @@</span><span class="diff-function"> set_deftext ()</span>&#x000A;<span class="diff-context"> static void&#x000A; usage()&#x000A; {</div>
+  <div class='modeline'>--:%*-  <b>*vc-diff*</b>     Top L1     (Diff from rl.c)-----------------------------------</div>
+  <div class='echoarea'><p>You can run the command `vc-diff' with C-x v =</p></div>
+</div>
+<div class='do'>
+  <p>Ask Emacs to show you a diff of this file. (If you need a hint, it&rsquo;s in the
+  first sentence of this section.)</p>
+</div>
+<p>The diff will be shown in diff-mode, which is also used for viewing patch
+files. diff-mode has some useful tricks—read its documentation when you have a
+spare minute.</p>
+
+<p>All the vc commands are bound to key sequences starting with <code><a class='glossary' href='glossary.html#keys'>C-x v</a></code>. If you
+were paying attention when you invoked the diff command by its full name, you
+may have noticed that Emacs told you the corresponding keybinding.</p>
+<div class='do'>
+  <p>Press <code><a class='glossary' href='glossary.html#keys'>C-x v C-h</a></code> to see all keybindings starting with <code><a class='glossary' href='glossary.html#keys'>C-x v</a></code>.</p>
+  <p>This also works with any other prefix. Try it with <code><a class='glossary' href='glossary.html#keys'>C-x 4</a></code>—you might notice
+  some parallels with keybindings you already know.</p>
+</div>
+<p>To commit the file, look into <code><a class='glossary' href='glossary.html#keys'>C-x v v</a></code> (<code>vc-next-action</code>). Or enter
+<code>vc-dir-mode</code> with <code><a class='glossary' href='glossary.html#keys'>C-x v d</a></code> and find out how to mark files, for performing
+<code>vc-</code> actions on multiple files at once.</p>
+
+<p><code>vc</code> has a (long!) <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Version-Control.html">section in the Emacs manual</a>.</p>
+
+<p>Personally, I prefer to use the <code>gitk</code> and <code>git gui</code> tools, or git&rsquo;s
+command-line interface directly, for adding, staging, committing, reverting,
+merging, branching. But I <em>do</em> use the Emacs <code>vc-diff</code> and <code>vc-print-log</code> (and
+<code>vc-annotate</code>!) extensively.</p>
+
+<p>Because <code>vc</code> is limited to the common denominator of the backend systems it
+supports, people have written custom modes for specific version control
+systems. <code>Magit</code> is one such mode for git; but as we haven&rsquo;t yet learned how to
+install extensions, we&rsquo;ll stick with <code>vc</code>. Anyway, <code>vc</code> can do a thing or two
+even <code>magit</code> doesn&rsquo;t do—have I mentioned <code>vc-annotate</code>?</p>
+<h2 id='annotate'>vc-annotate</h2>
+<p>A couple of sections ago, I asked you to grep the readline sources for
+&ldquo;rl_insert_comment&rdquo;.</p>
+<div class='do'>
+  <p>Switch to the <code>*grep*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a> if you still have it around, or do a new
+  search.</p>
+</div>
+<p>Remember, when switching <a class='glossary' href='glossary.html#buffers'>buffers</a> with <code><a class='glossary' href='glossary.html#keys'>C-x b</a></code> you have to enter the asterisks
+as part of the <a class='glossary' href='glossary.html#buffers'>buffer</a> name. (Incidentally, the asterisks are for <a class='glossary' href='glossary.html#buffers'>buffers</a> not
+associated with a file on disk. This is just a convention; you could always
+rename the <code>*grep*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a> to something without asterisks —see
+<code>rename-buffer</code>— or save it to disk if you wanted to.)</p>
+<div class='do'>
+  <p>The first hit should have been in <code>emacs_keymap.c</code>. Jump to that match.</p>
+</div>
+<p>Let&rsquo;s find out which release of readline added the Meta-# keybinding:</p>
+<div class='do'>
+  <div class='figure wide'>
+    <div class='titlebar'><p>*Annotate emacs_keymap.c (rev master)*</p></div>
+    <div class='window'>^06cd36c emacs_keymap.c <span class="vc-annotate-face-3f3fff">  /* The start of printing characters. */&#x000A;</span>f8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, rl_set_mark },           /* Meta-SPACE */&#x000A;</span>f8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, (rl_command_func_t *)0x0 },      /* Meta-! */&#x000A;</span>f8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, (rl_command_func_t *)0x0 },      /* Meta-" */&#x000A;</span><span class="cursor">f</span>8d82ba2 emacs_keymap.c <span class="vc-annotate-face-56ff3f">  { ISFUNC, rl_insert_comment },     /* Meta-# */&#x000A;</span>&#x000A;</div>
+  </div>
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x vc-annotate</a></code></p>
+  <p>Delete all Emacs <a class='glossary' href='glossary.html#windows'>windows</a> other than the annotate <a class='glossary' href='glossary.html#windows'>window</a> (you might also want
+  to resize the <a class='glossary' href='glossary.html#frames'>frame</a> so that it is large enough).</p>
+  
+  <p>With point on the &ldquo;Meta-#&rdquo; line, press <code>d</code> to view the diff of the revision
+  where this line was last changed.</p>
+  
+  <p>Now we&rsquo;re in diff-mode. It seems that this revision consisted mostly of
+  whitespace changes. Find the exact change to &ldquo;Meta-#&rdquo;. You can press <code><a class='glossary' href='glossary.html#keys'>C-c</a>&#x000A;C-w</code> to hide whitespace-only changes in the hunk surrounding point, and <code>n</code>
+  to jump to the next hunk.</p>
+  
+  <p>Nope, this revision wasn&rsquo;t it. Press <code>q</code> to exit the diff <a class='glossary' href='glossary.html#buffers'>buffer</a>, then <code>a</code> to
+  run annotate again, starting from the revision before this line&rsquo;s revision.</p>
+  <div class='figure wide'>
+    <div class='titlebar'><p>*vc-diff*</p></div>
+    <div class='window'><span class="diff-context">   { ISFUNC, (Function *)0x0 }, /* Meta-! */&#x000A;   { ISFUNC, (Function *)0x0 }, /* Meta-" */&#x000A;</span><span class="diff-removed">-  { ISFUNC, (Function *)0x0 }, /* Meta-# */&#x000A;</span><span class="diff-added">+  { ISFUNC, rl_insert_comment },/* Meta-# */&#x000A;</span><span class="diff-context">   { ISFUNC, (Function *)0x0 }, /* Meta-$ */&#x000A;   { ISFUNC, (Function *)0x0 }, /* Meta-% */</span>&#x000A;</div>
+  </div>
+  <p>Now make sure your point is on the right line (if the new revision is
+  different enough from the newer one, the line we&rsquo;re interested in may have
+  moved around). Then press <code>d</code> again, and in diff-mode <code>n</code> until you find the
+  right hunk. Yes, this is the change we&rsquo;re looking for!</p>
+  
+  <p>Go back to the annotate <a class='glossary' href='glossary.html#buffers'>buffer</a> (<code>q</code>). Press <code>l</code> to view the log message for
+  this revision. See, readline&rsquo;s &ldquo;Meta-#&rdquo; binding dates back to version 2.1! If
+  you want some context you can press <code>D</code> (that&rsquo;s <em>shift</em>-d) to view the diff
+  of <em>all</em> files changed in this revision.</p>
+</div>
+<p>Of course, annotate is more useful when the commits are more granular and the
+commit messages are more descriptive, with links to bug tracker entries and so
+on. But you get the idea.</p>
+
+<p>Right now I don&rsquo;t expect you to remember all these keybindings, but I do expect
+you to know how to find them when you need them.</p>
+<h2 id='ediff'>ediff</h2>
+<p><code>ediff</code> is a more powerful mode for viewing differences between files or
+revisions.</p>
+<div class='do'>
+  <p>Switch to <a class='glossary' href='glossary.html#buffers'>buffer</a> rl.c if necessary.</p>
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x ediff-revision</a></code>. Accept the default values of rl.c, its latest revision,
+  and its current state.</p>
+</div>
+<p>This opens a new <a class='glossary' href='glossary.html#frames'>frame</a> from which you control <code>ediff</code>; always make sure the
+<code>ediff</code> <a class='glossary' href='glossary.html#frames'>frame</a> has focus when you&rsquo;re giving it a command.</p>
+<div class='do'>
+  <p>Press <code>?</code> for help. Figure out how to step through each diff. Figure out how
+  to show the files side-by-side. <code>q</code> when you&rsquo;re done.</p>
+</div>
+<p>When invoking <code>ediff-revision</code> you can supply any two revisions, not just the
+latest revision and the current working copy. You can also diff any 2 <a class='glossary' href='glossary.html#buffers'>buffers</a>
+(<code>ediff-buffers</code>) or files (<code>ediff-files</code>).</p>
+
+<p>I suggest you stay away from <code>ediff-directories</code> (if you want to know why, try
+using it).</p>
+<h2 id='etags'>etags</h2>
+<p><code>etags</code> is a program that indexes source files and creates a <code>TAGS</code> file that
+Emacs can use to find definitions of variables, functions and types.</p>
+<div class='do'>
+  <p>Run the shell command <code>make TAGS</code> in the <code>readline</code> directory (either from a
+  <code>shell</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>, or with <code><a class='glossary' href='glossary.html#keys'>M-x compile</a></code>).</p>
+</div>
+<p>The Makefiles of most open-source projects include the <code>TAGS</code> target. For those
+that don&rsquo;t, you can use a combination of <code>find</code>, <code>xargs</code> and <code>etags</code> from the
+shell to generate the <code>TAGS</code> file manually (read the man pages for those tools
+if you need to).</p>
+
+<p>The <code>etags</code> you just ran was probably the one that shipped with Emacs. There&rsquo;s
+an alternate implementation called <a href="http://ctags.sourceforge.net/">&ldquo;Exuberant ctags&rdquo;</a> that supports more languages. Install it with
+your package manager (e.g. <code>port</code> or <code>yum install ctags</code>) and call it with
+<code>ctags -e</code>.</p>
+<div class='do'>
+  <p>Back in Emacs, invoke <code>find-tag</code> (<code>M-.</code>). Enter <code>rl_insert_comment</code> as the
+  tag to find, and then the location of the <code>TAGS</code> file you just generated.</p>
+</div>
+<div class='do'>
+  <p>From the help for <code>find-tag</code>, figure out how to jump back to the location you
+  were at before invoking the command, and how to find the next match if there
+  is more than one. (You might find the documentation from <code><a class='glossary' href='glossary.html#keys'>C-h S find-tag</a></code>
+  clearer than that from <code><a class='glossary' href='glossary.html#keys'>C-h f</a></code>.)</p>
+</div>
+<p>To use a different <code>TAGS</code> file <code>visit-tags-table</code>.</p>
+
+<p>If you&rsquo;re a C++ programmer, you&rsquo;ll soon find that <code>ctags</code>/<code>etags</code> is not
+perfect when it comes to classes and namespaces. As a 90% solution, it&rsquo;s good
+enough, most of the time. Hopefully someone will come up with a <a href="http://clang.llvm.org/">clang</a>-based indexer sometime soon.</p>
+<h2 id='gdb'>gdb</h2>
+<p>We&rsquo;re going to run the <code>rl</code> program under the GNU debugger, gdb.</p>
+<div class='do'>
+  <p>First run <code>compile</code> in <code>readline</code> and then in <code>readline/examples</code>.</p>
+</div>
+<p>The compilation should succeed,<a id='fnref5' href='#fn5' class='footnote'>[5]</a> as long as you haven&rsquo;t introduced any errors
+in any of the source files. If you have, you know how to view and back out your
+changes.</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x gdb</a></code>. When prompted for the command-line to use, specify the program
+  <code>examples/rl</code> as an argument to <code>gdb</code>: if you&rsquo;re in the <code>readline/examples</code>
+  directory, the command-line will look like <code>gdb ‑‑annotate=3 ./rl</code>.</p>
+</div>
+<p>You are now running <code>gdb</code> inside Emacs, so the standard <code>gdb</code> commands apply.
+Let&rsquo;s set a breakpoint in the <code>readline</code> function, start the <code>rl</code> program, and
+when we reach the breakpoint step through a few lines.</p>
+<div class='do'>
+  <p>Type the following commands at the <code>gdb</code> prompt:</p>
+  <p><code>break readline</code><br/>
+  <code>run</code><br/>
+  <code>print rl_pending_input</code><br/>
+  <code>next</code><br/>
+  <code>step</code><br/>
+  <code>backtrace</code><br/>
+  <code>frame 1</code></p>
+</div>
+<p>Note how Emacs displays the corresponding source file and line in a separate
+<a class='glossary' href='glossary.html#windows'>window</a>.</p>
+
+<p>The above commands are all interpreted directly by the <code>gdb</code> program. <code>gdb</code>
+allows you to abbreviate them to <code>r</code>, <code>p</code>, <code>n</code>, <code>s</code>, <code>bt</code>, and <code>f</code>,
+respectively. Pressing return on an empty line repeats the previous
+command—useful for multiple <code>next</code> commands. <code>help</code> displays <code>gdb</code>&rsquo;s built-in
+help.</p>
+
+<p>For serious debugging, Emacs can open additional <a class='glossary' href='glossary.html#windows'>windows</a> showing the current
+stack frames, breakpoints, local variables and registers. See the Emacs manual
+for details: <code><a class='glossary' href='glossary.html#keys'>C-h r</a></code> opens the Emacs manual in the Info browser, then search
+for the chapter titled &ldquo;GDB Graphical Interface&rdquo;.</p>
+<h2 id='homework'>Homework</h2>
+<p>You may be feeling somewhat overwhelmed at this point. Spend a few days using
+Emacs as your main editor, painful though it may be, before moving on to the
+next chapter of this guide. If you&rsquo;ve forgotten a command I&rsquo;ve taught you, try
+to figure it out yourself (use <code><a class='glossary' href='glossary.html#keys'>C-h m</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-h a</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-h f</a></code>, <code><a class='glossary' href='glossary.html#keys'>C-h k</a></code> and <code><a class='glossary' href='glossary.html#keys'>C-h S</a></code>)
+before looking it up here.</p>
+
+<p>As part of your commitment to learning Emacs, try to run your shell within
+Emacs as much as possible. (If you need help configuring your shell to work
+well within Emacs, or configuring Emacs to work well with your shell, we will
+revisit shell-mode in the <a href="customize_general.html#shell">&ldquo;General customization&rdquo; chapter</a> of this guide.)</p>
+<div id='footnotes'>
+  <p><a id='fn1' href='#fnref1' class='footnote'>[1]</a>:
+  You will need <code>git</code>, a source control system; the Git Book has <a href="http://book.git-scm.com/2_installing_git.html">installation
+  instructions</a>.</p>
+  
+  <p><a id='fn2' href='#fnref2' class='footnote'>[2]</a>:
+  On Windows you will need a shell provided by Cygwin or similar.</p>
+  
+  <p><a id='fn3' href='#fnref3' class='footnote'>[3]</a>:
+  These keybindings aren&rsquo;t arbitrary. <code><a class='glossary' href='glossary.html#keys'>C-c C-s</a></code> mirrors <code><a class='glossary' href='glossary.html#keys'>C-x C-s</a></code>, which you
+  already know for saving the entire <a class='glossary' href='glossary.html#buffers'>buffer</a> to a file (&ldquo;global&rdquo; keybindings
+  tend to start with <code><a class='glossary' href='glossary.html#keys'>C-x</a></code>, whereas <code><a class='glossary' href='glossary.html#keys'>C-c</a></code> is a prefix for mode-specific
+  bindings). And <code><a class='glossary' href='glossary.html#keys'>C-M-l</a></code> performs a similar function in other <a class='glossary' href='glossary.html#majormode'>editing modes</a>—in
+  c-mode it tries to bring into view the whole function surrounding <a class='glossary' href='glossary.html#region'>the point</a>.
+  If you&rsquo;re feeling overwhelmed by the number of keybindings to memorize, don&rsquo;t
+  worry; you can always find them again with <code><a class='glossary' href='glossary.html#keys'>C-h m</a></code>.</p>
+  
+  <p><a id='fn4' href='#fnref4' class='footnote'>[4]</a>:
+  On Windows you will need <code>find</code> and <code>grep</code> commands provided by Cygwin or
+  similar.</p>
+  
+  <p><a id='fn5' href='#fnref5' class='footnote'>[5]</a>:
+  I haven&rsquo;t tested this on Windows, but I&rsquo;m assuming that Cygwin installs the
+  necessary compiler, headers and libraries.</p>
+</div>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='customize_c.html'>Next: cc-mode customization</a></p>
+    </div>
+  </body>
+</html>

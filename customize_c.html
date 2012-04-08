@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      How to learn Emacs :: cc-mode customization
+    </title>
+    <link href='emacs.css' media='all' rel='stylesheet'>
+  </head>
+  <body>
+    <div id='sidebar'>
+      <div id='info'>
+        <h1>How to learn Emacs</h1>
+        <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+        Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
+        Last updated 8 Apr 2012.</p>
+      </div>
+      <div id='toc'>
+        <!-- Table of Contents -->
+<ul>
+  <li><a href='howtolearn.html'>1. About this guide to Emacs</a></li>
+  <li><a href='why.html'>2. Why Emacs</a></li>
+</ul>
+<p>—Basic usage—</p>
+<ul>
+  <li><a href='install.html'>3. Install the right Emacs</a></li>
+  <li><a href='tutorial.html'>4. The very basics</a></li>
+  <li><a href='basic_c.html'>5. Basic Unix/C workflow</a></li>
+</ul>
+<p>—Basic customisation—</p>
+<ul>
+  <li class='current'>6. cc-mode customization
+    <ul>
+      <li><a href="#style">House coding style</a></li>
+      <li><a href="#elisp">Emergency elisp</a></li>
+      <li><a href="#indentation">Configuring indentation</a></li>
+      <li><a href="#setq">Setting variables from elisp code</a></li>
+      <li><a href="#init">Init file</a></li>
+      <li><a href="#hooks">Hooks</a></li>
+      <li><a href="#style-system">The cc-mode style system</a></li>
+      <li><a href="#keys">Binding keys</a></li>
+      <li><a href="#auto-mode">Associating file extensions with an <a class='glossary' href='glossary.html#majormode'>editing mode</a></a></li>
+      <li><a href="#homework">Homework</a></li>
+    </ul>
+  </li>
+  <li><a href='customize_colors.html'>7. Fix that awful color scheme</a></li>
+  <li><a href='customize_general.html'>8. General customization</a></li>
+</ul>
+<p>—Miscellaneous—</p>
+<ul>
+  <li><a href='info.html'>9. Info documentation</a></li>
+  <li><a href='contribute_emacs.html'>10. Contributing to Emacs</a></li>
+</ul>
+<p>—Appendices—</p>
+<ul>
+  <li><a href='ergonomics.html'>A. Ergonomics</a></li>
+  <li><a href='osx.html'>B. OS X</a></li>
+  <li><a href='contribute_guide.html'>C. Contributing to this guide</a></li>
+  <li><a href='glossary.html'>D. Glossary</a></li>
+</ul>
+      </div>
+      <p>Copyright © 2012 <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
+      This guide is released under the<br/>
+      <a rel="license" href="http://www.gnu.org/copyleft/fdl.html">GNU
+      Free Documentation License</a>.</p>
+    </div>
+    <div id='content2'>
+      <!-- Contents -->
+<h1>cc-mode customization</h1>
+<p>I should probably lead you through the relevant parts of the <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html">Emacs</a>, <a href="http://www.gnu.org/software/emacs/manual/html_node/elisp/index.html">Emacs
+Lisp</a>,
+and <a href="http://www.gnu.org/software/emacs/manual/html_node/ccmode/index.html">CC Mode</a> manuals,
+but they&rsquo;re just. so. <em>long</em>! The mere table of contents for the Emacs manual
+is longer than our previous &ldquo;Unix/C workflow&rdquo; chapter.<a id='fnref1' href='#fn1' class='footnote'>[1]</a></p>
+
+<p>Instead I&rsquo;ll show you how I try to find the information I need from the Emacs
+source code (most of which, thankfully, is in Lisp rather than C). The manuals
+I dissed a moment ago <em>are</em> incredibly useful. It is cause for wonder that an
+open-source project has produced such comprehensive documentation! But it is
+<em>impossible</em> to read those manuals cover-to-cover; you must learn how to
+efficiently find the right information. We&rsquo;ve already covered the basic tools
+for that, and now we will exercise them a lot more.</p>
+
+<p>By the way, <code>c-mode</code>, <code>c++-mode</code>, <code>objc-mode</code>, <code>java-mode</code>, and a few others
+are all aliases for <code>cc-mode</code>, but with slight configuration changes to support
+the respective languages. From here on I&rsquo;ll use the name <code>cc-mode</code>.</p>
+<h2 id='style'>House coding style</h2>
+<p>Are you supposed to indent with 2, 3, 4 or 8 spaces, or with tabs? How big is
+a tab? Whatever you want, I&rsquo;m going to assume it&rsquo;s <em>not</em> the indentation that
+cc-mode provides by default, so that we can walk through the procedure for
+changing it.</p>
+<div class='do'>
+  <p>Visit (open) a C or C++ file (you can use <code>readline/examples/rl.c</code> from the
+  previous chapter).</p>
+</div>
+<p>Pressing <code>TAB</code> anywhere on a line indents it to the appropriate position
+according to the current indentation rules (to insert a literal tab, use
+<code><a class='glossary' href='glossary.html#keys'>C-q</a></code>, a.k.a. <code>quoted-insert</code>).</p>
+
+<p>Let&rsquo;s find out what Emacs does behind the scenes when we press <code>TAB</code>:</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h k TAB</a></code></p>
+</div>
+<div class='window'>TAB runs the command c-indent-line-or-region,&#x000A;which is an interactive compiled Lisp function in `<span class="button">cc-cmds.el</span>'.&#x000A;&nbsp;</div>
+<div class='modeline'>-U:%%-  <b>*Help*</b>         Top L1     (Help View)-----------------------------------------------</div>
+<div class='echoarea'><p>Type C-x 1 to delete the help <a class='glossary' href='glossary.html#windows'>window</a>.</p></div>
+<p>If you don&rsquo;t see the link to <code>cc-cmds.el</code>, then you don&rsquo;t have the elisp
+sources installed. Use your system&rsquo;s package manager to install the <code>emacs-el</code>
+package and try again.</p>
+<div class='do'>
+  <p>Follow the link to <code>cc-cmds.el</code>. This will position you right where
+  <code>c-indent-line-or-region</code> is defined. Bring the whole definition into view
+  (<code><a class='glossary' href='glossary.html#keys'>C-M-l</a></code>) if necessary.</p>
+</div>
+<div class='window default'>(<span class="keyword">defun</span> <span class="function-name">c-indent-line-or-region</span> (<span class="type">&amp;optional</span> arg region)&#x000A;  <span class="doc">"Indent active region, current line, or block starting on this line.&#x000A;In Transient Mark mode, when <a class='glossary' href='glossary.html#region'>the region</a> is active, reindent <a class='glossary' href='glossary.html#region'>the region</a>.&#x000A;Otherwise, with a prefix argument, rigidly reindent the expression&#x000A;starting on the current line.&#x000A;Otherwise reindent just the current line."</span>&#x000A;  (interactive&#x000A;   (list current-prefix-arg (use-region-p)))&#x000A;  (<span class="keyword">if</span> region&#x000A;      (c-indent-region (region-beginning) (region-end))&#x000A;    (c-indent-command arg)))&#x000A;&#x000A;</div>
+<h2 id='elisp'>Emergency elisp</h2>
+<p>A brief parenthesis is needed to explain the above code. Let&rsquo;s start with the
+<code>if</code> statement at the end:</p>
+<div class='window default'>  <span class="region">(<span class="keyword">if</span> region&#x000A;      (c-indent-region (region-beginning) (region-end))&#x000A;    (c-indent-command arg))</span>)&#x000A;</div>
+<p>For clarity, let&rsquo;s simplify it to:</p>
+<div class='window default'>  (<span class="keyword">if</span> region&#x000A;      a&#x000A;    b)&#x000A;</div>
+<p>If you still don&rsquo;t understand what that means, pretend that <code>if</code> is actually a
+function, and that it looks like this:</p>
+<div class='window default'>  <span class="keyword">if</span>(region, a, b)&#x000A;</div>
+<p>(Moving that parenthesis to the <em>left</em> of the function is probably the largest
+single barrier to Lisp&rsquo;s adoption by the rest of the world.)<a id='fnref2' href='#fn2' class='footnote'>[2]</a></p>
+<div class='do'>
+  <p>What do the three arguments <code>region</code>, <code>a</code> and <code>b</code> mean? Make a guess, and
+  then check the answer at <code><a class='glossary' href='glossary.html#keys'>C-h f if</a></code>.</p>
+</div>
+<p>The definitions of <em><code>COND</code></em>, <em><code>THEN</code></em> and <em><code>ELSE</code></em> should be pretty clear. But
+what does it mean by &ldquo;<code>if</code> is a special form&rdquo;?</p>
+
+<p>It turns out that <code>if</code> isn&rsquo;t a regular function. The elisp rule for evaluation
+of &ldquo;normal&rdquo; forms—where &ldquo;form&rdquo; means a parenthesized &ldquo;shape&rdquo; like <code>(a b c)</code> or
+<code>(a b (c d))</code>—is to evaluate each argument, and then pass the resulting values
+to the function.</p>
+
+<p>Let&rsquo;s consider the function <code>+</code> (elisp doesn&rsquo;t have special infix operators, so
+<code>+</code> is just a function). If <code>x</code> is a variable containing the value <code>5</code>, and <code>y</code>
+is a variable containing the value <code>2</code>, then the following two expressions are
+identical:</p>
+<div class='window default'>  (+ x y)&#x000A;  (+ 5 2)&#x000A;</div>
+<p>The function <code>+</code> never sees <code>x</code>; it only sees <code>5</code>.</p>
+<div class='do'>
+  <p>Evaluate the form <code>(+ 5 2)</code>: Switch to the <code>*scratch*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>, type <code>(+ 5 2)</code>
+  on a line of its own, and press <code><a class='glossary' href='glossary.html#keys'>C-M-x</a></code> to evaluate the form and display the
+  result in the <a class='glossary' href='glossary.html#echoarea'>echo area</a>.</p>
+</div>
+<p>The very first element in the form (<code>+</code>, in this case) gets evaluated too. <code>+</code>
+is actually a variable<a id='fnref3' href='#fn3' class='footnote'>[3]</a> whose value is the function that adds numbers.</p>
+
+<p>Anyway, back to <code>if</code>. <code>if</code> is a &ldquo;special&rdquo; form, which means that the elisp
+interpreter treats <code>if</code> as a special case. Upon reflection, it is obvious that
+the normal function evaluation rules are not suitable for <code>if</code>: We wouldn&rsquo;t
+want to evaluate <em><code>ELSE</code></em>, with its possible side-effects, when <em><code>COND</code></em> is
+&ldquo;true&rdquo; (non-nil).</p>
+
+<p>All this is explained in the Emacs Lisp manual:</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h S if</a></code></p>
+  <p>In the <code>*info*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a> press <code>i</code> (for <code>i</code>ndex) and enter <code>special forms</code>.</p>
+</div>
+<div class='do'>
+  <p>Go back to the <code>cc-cmds.el.gz</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>.</p>
+  <p>Enable the <code>eldoc</code> <a class='glossary' href='glossary.html#minormode'>minor mode</a> (<code><a class='glossary' href='glossary.html#keys'>M-x eldoc-mode</a></code>). Now positioning <a class='glossary' href='glossary.html#region'>the point</a>
+  over the <code>if</code> statement will show some brief documentation in the <a class='glossary' href='glossary.html#echoarea'>echo area</a>.</p>
+  <p>Enable <code>show-paren-mode</code> too. This should help clarify where the <em><code>THEN</code></em> and
+  <em><code>ELSE</code></em> clauses begin and end.</p>
+</div>
+<p>Now, back up to the <code>defun</code>:</p>
+<div class='window default'>(<span class="keyword">defun</span> <span class="function-name">c-indent-line-or-region</span> (<span class="type">&amp;optional</span> arg region)&#x000A;  <span class="doc">"Indent active region, current line, or block starting on this line.&#x000A;In Transient Mark mode, when <a class='glossary' href='glossary.html#region'>the region</a> is active, reindent <a class='glossary' href='glossary.html#region'>the region</a>.&#x000A;Otherwise, with a prefix argument, rigidly reindent the expression&#x000A;starting on the current line.&#x000A;Otherwise reindent just the current line."</span>&#x000A;  (interactive&#x000A;   (list current-prefix-arg (use-region-p)))&#x000A;  (<span class="keyword">if</span> region&#x000A;      (c-indent-region (region-beginning) (region-end))&#x000A;    (c-indent-command arg)))&#x000A;</div>
+<div class='do'>
+  <p>You now have three ways to get help on <code>defun</code>: <code>eldoc</code>&rsquo;s summary in the echo
+  area, the reference provided by <code><a class='glossary' href='glossary.html#keys'>C-h f</a></code>, and the more comprehensive Info
+  manual at <code><a class='glossary' href='glossary.html#keys'>C-h S</a></code>. Take your pick.</p>
+</div>
+<p>If you run across the word &ldquo;lambda&rdquo;, it&rsquo;s the same as the &ldquo;function&rdquo; keyword
+in javascript for an anonymous function.</p>
+
+<p>To reiterate:</p>
+
+<ul>
+<li><code>defun</code> defines a function named <em><code>NAME</code></em>.</li>
+<li><em><code>ARGLIST</code></em> is a list of arguments for the function. In elisp, a list is
+enclosed in parens: <code>(a b c)</code>. In this case it isn&rsquo;t evaluated as a function
+call, because <code>defun</code> is a special form that treats this particular list in a
+special way. When <code>defun</code>ing a function that takes no arguments, <em><code>ARGLIST</code></em>
+would be the empty list <code>()</code>.</li>
+<li>The optional <em><code>DOCSTRING</code></em> is used by the <code><a class='glossary' href='glossary.html#keys'>C-h f</a></code> help system (yes, even for
+functions you define yourself!).</li>
+<li><em><code>BODY</code></em> is one or more lists that are evaluated when you <em>call</em> the
+function.</li>
+<li>&hellip;except for the <code>(interactive ...)</code> form.</li>
+</ul>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h S interactive</a></code></p>
+</div>
+<p>Don&rsquo;t get too bogged-down by the explanation; reading the first two paragrahs
+is enough. Learn to find <em>just</em> the information you need, or you will be easily
+overwhelmed. Right now we don&rsquo;t need to know how to <em>use</em> <code>interactive</code>, only
+what it <em>means</em>.</p>
+<h2 id='indentation'>Configuring indentation</h2>
+<p>So. <code>c-indent-line-or-region</code> is a function that optionally takes arguments
+<code>arg</code> and <code>region</code>, which, when the function is called interactively (for
+example by pressing <code>TAB</code>), are set to the prefix argument (if specified with
+<code><a class='glossary' href='glossary.html#keys'>C-u</a></code> or similar) and &ldquo;true&rdquo; if <a class='glossary' href='glossary.html#region'>the region</a> is active.</p>
+
+<p>Right now we care about indentation when operating not on <a class='glossary' href='glossary.html#region'>the region</a> but on a
+single line (i.e. <code>region</code> is <code>nil</code>), so let&rsquo;s look at the <em><code>ELSE</code></em> clause:</p>
+<div class='window default'>  (<span class="keyword">if</span> region&#x000A;      (c-indent-region (region-beginning) (region-end))&#x000A;    <span class="region">(c-indent-command arg)</span>)&#x000A;</div>
+<div class='do'>
+  <p>Use <code>find-function</code> to jump to the definition of <code>c-indent-command</code>.</p>
+</div>
+<p>This is a long and scary function, but luckily it has a good documentation
+string. Now that we know the name of this function, we can view the same
+documentation in a help <a class='glossary' href='glossary.html#buffers'>buffer</a>, with <code><a class='glossary' href='glossary.html#keys'>C-h f c-indent-command</a></code>.</p>
+
+<p>The documentation mentions a couple of interesting variables: <code>c-basic-offset</code>
+and <code>indent-tabs-mode</code>.</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h v c-basic-offset</a></code></p>
+</div>
+<p>That talks about &ldquo;buffer-local&rdquo; and &ldquo;file local&rdquo; variables. What?</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h S buffer-local</a></code></p>
+</div>
+<div class='do'>
+  <p>From the elisp Info node for Buffer-Local Variables, search for &ldquo;file local&rdquo;
+  (you can use <code><a class='glossary' href='glossary.html#keys'>C-s</a></code> or the index <code>i</code>).</p>
+</div>
+<p>As you can see you sometimes have to try different searches to find the right
+information. &ldquo;Buffer-local&rdquo; happened to be in the index, so the symbol search
+(<code><a class='glossary' href='glossary.html#keys'>C-h S</a></code>) found it; &ldquo;File local&rdquo; has a space, but the symbol search doesn&rsquo;t
+allow spaces, so you had to search from within the Info <a class='glossary' href='glossary.html#buffers'>buffer</a> itself. You
+could also have gone up (<code>u</code>) from the &ldquo;Buffer-Local Variables&rdquo; Info node and
+scanned the &ldquo;Variables&rdquo; table of contents.</p>
+
+<p>Let&rsquo;s check the current value of <code>c-basic-offset</code>:</p>
+<div class='do'>
+  <p>Switch to <a class='glossary' href='glossary.html#buffers'>buffer</a> <code>rl.c</code> (<code>c-basic-offset</code> is buffer-local, so it matters
+  which <a class='glossary' href='glossary.html#buffers'>buffer</a> we&rsquo;re in).</p>
+  
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x eval-expression RET c-basic-offset RET</a></code></p>
+</div>
+<p>Now change it to 4:</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>M-x set-variable c-basic-offset 4</a></code></p>
+  <p>Find a line to re-indent and press <code>TAB</code>.</p>
+</div>
+<div class='do'>
+  <p>Repeat the same investigation with variable <code>indent-tabs-mode</code>.</p>
+</div>
+<h2 id='setq'>Setting variables from elisp code</h2>
+
+<div class='do'>
+  <p>Switch to the <code>*scratch*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>.</p>
+</div>
+<p>Anything starting with a <code>;</code> is a comment.</p>
+<div class='do'>
+  <p>Type in this form and evaluate it with <code><a class='glossary' href='glossary.html#keys'>C-M-x</a></code>:</p>
+  <p><code>(set indent-tabs-mode nil)</code></p>
+</div>
+<p>You triggered an error, and Emacs brings up the backtrace in an elisp debugger.
+You tried to set a constant to <code>nil</code>, which is clearly an error.</p>
+<div class='do'>
+  <p>Explain why this happened, with your knowledge of the previous value of
+  <code>indent-tabs-mode</code> and of the elisp rules for evaluating functions.</p>
+</div>
+<p>We can <em>quote</em> the name of the variable so that it doesn&rsquo;t get evaluated:</p>
+<div class='do'>
+  <p><code>(set 'indent-tabs-mode nil)</code></p>
+</div>
+<p>Read more about quoting:</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h S quote</a></code></p>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h S setq</a></code></p>
+</div>
+<p>The following forms do exactly the same; the preferred form is <code>setq</code>.</p>
+<div class='window default'>(set 'indent-tabs-mode nil)&#x000A;(set (quote indent-tabs-mode) nil)&#x000A;(setq indent-tabs-mode nil)&#x000A;</div>
+<p>One last thing: <code>indent-tabs-mode</code> is buffer-local, so setting it here only
+affects the <code>*scratch*</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>. To make the change global, you must use
+<code>setq-default</code>.</p>
+<h2 id='init'>Init file</h2>
+<p>Your changes to these variables will be lost when you restart Emacs. You need
+to put your settings into an initialization file that Emacs will load each time
+it starts.</p>
+<div class='do'>
+  <p>In the Emacs manual (<code><a class='glossary' href='glossary.html#keys'>C-h r</a></code>) table of contents, search for &ldquo;init file&rdquo; and
+  read the first paragraph.</p>
+</div>
+<p>There are several places you can put your init file; I suggest the one that
+goes inside the <code>~/.emacs.d</code> directory, so you can organize your customizations
+by keeping multiple elisp files in the same directory, and loading them from
+the main init file. Put this directory under version control.</p>
+<div class='do'>
+  <p>Visit (open) the init file you&rsquo;ve chosen (if the file doesn&rsquo;t exist, Emacs
+  will create it when you save the <a class='glossary' href='glossary.html#buffers'>buffer</a>).</p>
+</div>
+<div class='do'>
+  <p>Add the following lines:</p>
+  <p><code>(setq-default c-basic-offset 4)</code><br/>
+  <code>(setq-default indent-tabs-mode nil)</code></p>
+</div>
+<p>(or whatever values you have chosen).</p>
+<div class='do'>
+  <p>Restart Emacs, visit <code>rl.c</code>, and verify that your settings are in effect.</p>
+</div>
+<h2 id='hooks'>Hooks</h2>
+<p>By default, <code>cc-mode</code> automatically re-indents the line whenever you type a
+character like <code>;</code> or <code>}</code>. These are called <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Electric-C.html">&ldquo;electric characters&rdquo;</a> and
+you can disable this behavior in a particular <a class='glossary' href='glossary.html#buffers'>buffer</a> with
+<code>c-toggle-electric-state</code> (<code><a class='glossary' href='glossary.html#keys'>C-c C-l</a></code>).</p>
+
+<p>To always disable electric characters we can have Emacs call
+<code>c-toggle-electric-state</code> each time it loads <code>cc-mode</code>.</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h m</a></code> (from the <code>rl.c</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>, or any other <code>cc-mode</code> <a class='glossary' href='glossary.html#buffers'>buffer</a>) to find out
+  the names of the hooks provided by <code>cc-mode</code>.</p>
+</div>
+<p>A <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html">hook</a>
+is a variable containing a list of functions to be run, usually upon entry to a
+particular <a class='glossary' href='glossary.html#majormode'>editing mode</a>. For C code we have two hooks: One for all of
+<code>cc-mode</code>&rsquo;s supported languages, and one just for C. We&rsquo;ll use the first one,
+<code>c-mode-common-hook</code>.</p>
+<div class='do'>
+  <p>Add the following to your init file:</p>
+  <div class='window default'>(<span class="keyword">defun</span> <span class="function-name">my-disable-electric-indentation</span> ()&#x000A;  <span class="doc">"Stop ';', '}', etc. from re-indenting the current line."</span>&#x000A;  (c-toggle-electric-state -1))&#x000A;(add-hook 'c-mode-common-hook 'my-disable-electric-indentation)&#x000A;</div>
+</div>
+<p>First we defined a function that takes no arguments and calls
+<code>(c-toggle-electric-state -1)</code>. Then we added the function to the
+<code>c-mode-common-hook</code>.</p>
+
+<p>The <code>-1</code> argument tells <code>c-toggle-electric-state</code> to disable, rather than
+toggle, the electric behavior (I learned this from <code><a class='glossary' href='glossary.html#keys'>C-h f</a>&#x000A;c-toggle-electric-state</code>; some functions might want <code>nil</code>, but this one wanted
+a negative number).</p>
+
+<p>You could add an anonymous function to a hook directly:</p>
+<div class='window default'>(add-hook 'c-mode-common-hook&#x000A;          (<span class="keyword">lambda</span> () (c-toggle-electric-state -1)))&#x000A;</div>
+<p>but then you have no way of referring to the function by name, so you can&rsquo;t
+remove it from the hook with <code>remove-hook</code>.</p>
+<h2 id='style-system'>The cc-mode style system</h2>
+<p>There is more to coding style than the size of indentation. Where should
+opening braces go? Should they be indented too?</p>
+
+<p>The <code><a class='glossary' href='glossary.html#keys'>C-h v</a></code> documentation for <code>c-basic-offset</code> mentioned a &ldquo;style system&rdquo;, and
+referred us to <code>c-default-style</code>.</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h v c-default-style</a></code></p>
+</div>
+<div class='window default'>c-default-style is a variable defined in `<span class="button">cc-vars.el</span>'.&#x000A;Its value is ((java-mode . "java")&#x000A; (awk-mode . "awk")&#x000A; (other . "gnu"))&#x000A;</div>
+<p>Elisp syntax for a list is <code>(a b c)</code>, and for a pair is <code>(a . b)</code>. Pairs are
+called &ldquo;cons cells&rdquo; in lisp terminology, and you access the first element with
+the function <code>car</code>, the second with the function <code>cdr</code> (pronounced
+&ldquo;could-er&rdquo;).</p>
+
+<p>So the value of <code>c-default-style</code> is a list containing 3 pairs; it&rsquo;s used as a
+lookup dictionary where <code>java-mode</code>, <code>awk-mode</code> and <code>other</code> are the keys, and
+<code>"java"</code>, <code>"awk"</code> and <code>"gnu"</code> are the values (in this case, names of styles to
+use for each of the <a class='glossary' href='glossary.html#majormode'>editing modes</a> represented by the keys). These lookup
+dictionaries are called &ldquo;alists&rdquo;.</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h S alist</a></code></p>
+</div>
+<p>In your init file you could set <code>c-default-style</code> so that the default style for
+<code>other</code><a id='fnref4' href='#fn4' class='footnote'>[4]</a> is something other than <code>"gnu"</code>.</p>
+
+<p>If you need to customize anything (including <code>c-basic-offset</code> and
+<code>indent-tabs-mode</code>) to something different than any of the built-in styles, I
+recommend you define your own style: Thus if you work on different projects
+with different styles, you will be able to switch easily (with <code>c-set-style</code>).
+The way we set <code>c-basic-offset</code> earlier will <a href="http://www.gnu.org/software/emacs/manual/html_node/ccmode/Built_002din-Styles.html#index-User-style-294">automatically create a style
+called &ldquo;user&rdquo;</a>.</p>
+
+<p>For help see <a href="http://www.gnu.org/software/emacs/manual/html_node/ccmode/Config-Basics.html">&ldquo;Configuration basics&rdquo;</a>,
+<a href="http://www.gnu.org/software/emacs/manual/html_node/ccmode/Customizing-Indentation.html">&ldquo;Customizing indentation&rdquo;</a>,
+and <a href="http://www.gnu.org/software/emacs/manual/html_node/ccmode/Sample-_002eemacs-File.html">&ldquo;Sample .emacs file&rdquo;</a>
+in the CC Mode Manual.</p>
+<h2 id='keys'>Binding keys</h2>
+<p>I often come across source code where one file expects tabs to equal 8 spaces,
+and another file in the same directory—or even other lines within the same
+file—want a tab to be 4 spaces. Let&rsquo;s create a function that cycles
+<code>tab-width</code> between 2, 4 and 8 spaces.</p>
+
+<p>(I found the variable <code>tab-width</code> by using <code>apropos-variable</code> to search for
+&ldquo;tab&rdquo;.)</p>
+<div class='do'>
+  <div class='window default'>(<span class="keyword">defun</span> <span class="function-name">my-tab-width</span> ()&#x000A;  <span class="doc">"Cycle tab-width between values 2, 4, and 8."</span>&#x000A;  (interactive)&#x000A;  (setq tab-width&#x000A;        (<span class="keyword">cond</span> ((eq tab-width 8) 2)&#x000A;              ((eq tab-width 2) 4)&#x000A;              (t 8)))&#x000A;  (redraw-display))&#x000A;</div>
+</div>
+<p>The <code>cond</code> expression evaluates to 2 if <code>tab-width</code> equals 8; to 4 if
+<code>tab-width</code> equals 2; and to 8 otherwise. Look up <code>cond</code> and <code>eq</code> in the Info
+manuals if you like.</p>
+
+<p>I&rsquo;ve been naming all my functions &ldquo;<em>my</em>-something&rdquo; because elisp doesn&rsquo;t have
+separate namespaces for each mode or package; this way I can be sure my
+functions won&rsquo;t accidentally re-define an existing function that some editing
+mode relies on.</p>
+
+<p>Now let&rsquo;s bind our new function to a key sequence, so we can invoke it
+conveniently. <code><a class='glossary' href='glossary.html#keys'>C-c</a></code> followed by a letter is <a href="http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html">reserved for users to define</a>,
+so we&rsquo;ll use <code><a class='glossary' href='glossary.html#keys'>C-c t</a></code>:</p>
+<div class='do'>
+  <div class='window default'>(global-set-key (kbd <span class="string">"C-c t"</span>) 'my-tab-width)&#x000A;&#x000A;</div>
+</div>
+<p>The meaning of &ldquo;global&rdquo; in <code>global-set-key</code> should be obvious. If you&rsquo;d like a
+keybinding just for <code>cc-mode</code>, use <code>define-key</code> to add the binding to the
+mode&rsquo;s keymap:</p>
+<div class='window default'>(define-key c-mode-base-map (kbd <span class="string">"C-c t"</span>) 'my-tab-width)&#x000A;</div>
+<p>I discovered <code>c-mode-base-map</code> with <code><a class='glossary' href='glossary.html#keys'>C-h v c-mode- TAB TAB</a></code>. There is also a
+<code>c-mode-map</code> which is just for the C language, rather than all languages
+supported by <code>cc-mode</code>.</p>
+<h2 id='auto-mode'>Associating file extensions with an <a class='glossary' href='glossary.html#majormode'>editing mode</a></h2>
+<p>Say you want <code>.h</code> files to open in <code>c++-mode</code> rather than <code>c-mode</code>:</p>
+<div class='do'>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h v auto-mode-alist</a></code></p>
+  <p><code><a class='glossary' href='glossary.html#keys'>C-h f add-to-list</a></code></p>
+</div>
+<div class='figure'>
+  <div class='window default'>(add-to-list 'auto-mode-alist&#x000A;             '(<span class="string">"\\.h$"</span> . c++-mode))</div>
+  <div class='modeline'>-U:---  <b>*scratch*</b>      All L6      (Lisp Interaction)----------------------------------------</div>
+  <div class='echoarea'><p><span class="prompt">Regexp I-search:</span> \.h$</p></div>
+</div>
+<p>The trickiest part will be getting the regular expression right—elisp doesn&rsquo;t
+have syntax for a regexp literal, so you have to put it inside a string, and
+then the string backslash-escaping makes the regexp rather awful. See
+<a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Regexps.html">&ldquo;Regexps&rdquo;</a> in the
+Emacs manual.</p>
+<h2 id='homework'>Homework</h2>
+<p>If you have a spare 30 minutes read Steve Yegge&rsquo;s <a href="http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html">Emergency Elisp</a>.</p>
+
+<p>If you have a spare 6 months work through <a href="http://mitpress.mit.edu/sicp/">Structure and Interpretation of
+Computer Programs</a>, a famous textbook from MIT
+that teaches important (and some quite advanced) programming concepts and
+techniques using a simple dialect of Lisp called Scheme. If you like &ldquo;mathy&rdquo;
+things like the <a href="http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a> for finding prime numbers,
+<a href="http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method">Heron&rsquo;s method</a>
+for calculating square roots, or estimating the value of pi using <a href="http://en.wikipedia.org/wiki/Monte_Carlo_method">Monte Carlo
+simulation</a>, then you&rsquo;ll love
+this book.</p>
+
+<p>If you had a collection of <code>.emacs</code> customizations collected from the web
+before you started this guide to Emacs, go over them now and try to understand
+them thoroughly.</p>
+
+<p>In future, when you need a particular customization try to find the solution
+from the manuals or the elisp sources before reaching for Google.</p>
+
+<p>Don&rsquo;t try to modify the elisp files that are part of the Emacs distribution.
+For one, it won&rsquo;t be easy to merge your changes when you update Emacs to a
+newer version. Second, the files are byte-compiled so you&rsquo;d have to recompile
+them. Third, even if you did it still wouldn&rsquo;t help because the core elisp
+functions are <a href="http://www.gnu.org/software/emacs/manual/html_node/elisp/Building-Emacs.html">built into the Emacs image</a>,
+so you&rsquo;d have to recompile the whole program. Instead, use the variables and
+hooks provided for customization.</p>
+
+<p>Don&rsquo;t pay attention to the Emacs manual whenever it tells you to use the <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html">&ldquo;Easy
+customization&rdquo;</a>
+facility (in some help <a class='glossary' href='glossary.html#buffers'>buffers</a> it will say &ldquo;you can customize this variable&rdquo;).
+It&rsquo;s referring to a really awkward semi-graphical interface for setting Emacs
+variables. Best to keep all your customizations in your own init file.</p>
+<div id='footnotes'>
+  <p><a id='fn1' href='#fnref1' class='footnote'>[1]</a>:
+  Try this:<br/>
+  <code>lynx --dump http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html |</code><br/>
+  <code>sed '/^References/,$ d' | wc -w</code></p>
+  
+  <p><a id='fn2' href='#fnref2' class='footnote'>[2]</a>:
+  I <em>am</em> joking. Lisp does have plenty of real problems.</p>
+  
+  <p><a id='fn3' href='#fnref3' class='footnote'>[3]</a>:
+  Actually a &ldquo;symbol&rdquo;. Curiously, elisp functions and variables live in
+  separate namespaces, so you can define the variable <code>+</code>, set it to <code>2</code>, and
+  still use <code>+</code> as a function in nonsensical statements like <code>(+ 1 +)</code>. Try it:<br/>
+  <code>(setq + 2)</code><br/>
+  <code>(+ 1 +)</code></p>
+  
+  <p><a id='fn4' href='#fnref4' class='footnote'>[4]</a>:
+  &ldquo;Other&rdquo; here only refers to languages supported by <code>cc-mode</code>, not <em>any</em> other
+  language.</p>
+</div>
+      <!-- Contents -->
+      <p class='next'><a rel='next' href='customize_colors.html'>Next: Fix that awful color scheme</a></p>
+    </div>
+  </body>
+</html>
