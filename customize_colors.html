@@ -33,7 +33,7 @@
   <li class='current'>7. Fix that awful color scheme
     <ul>
       <li><a href="#default">Default font</a></li>
-      <li><a href="#colours">Syntax highlighting colours</a></li>
+      <li><a href="#colors">Syntax highlighting colors</a></li>
       <li><a href="#diff">diff-mode</a></li>
       <li><a href="#themes">Color themes</a></li>
       <li><a href="#packages">Installing third-party elisp packages</a></li>
@@ -85,13 +85,13 @@ if you missed it).</p>
 OS X that prevents &ldquo;Save Options&rdquo; from saving changes to the default font. OS X
 users will have to use the <code>customize-face</code> mechanism I explain below,
 specifying <code>default</code> as the face name.</p>
-<h2 id='colours'>Syntax highlighting colours</h2>
+<h2 id='colors'>Syntax highlighting colors</h2>
 <p><a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html">Font Lock mode</a> is the
 <a class='glossary' href='glossary.html#minormode'>minor mode</a> responsible for syntax highlighting. You can read up on font-lock
 mode if you want to figure out how Emacs decides what is a comment or a keyword
 or a variable, or how to add your own keywords.</p>
 
-<p>But to merely change the colours:</p>
+<p>But to merely change the colors:</p>
 <div class='do'>
   <p>Figure out the name of the face you want to change: <code>describe-face</code> (defaults
   to the face at point) or <code>list-faces-display</code>.</p>
@@ -99,8 +99,8 @@ or a variable, or how to add your own keywords.</p>
 <div class='do'>
   <p><code>modify-face</code> will prompt you for a face and for each attribute to change.
   Leave attributes as &ldquo;unspecified&rdquo; (the default) to inherit from the default
-  face. When it comes to the foreground and background colours, you can use the
-  predefined colours shown by tab-completion, or you can specify RGB hex values
+  face. When it comes to the foreground and background colors, you can use the
+  predefined colors shown by tab-completion, or you can specify RGB hex values
   like <code>#3f7f5f</code>.</p>
 </div>
 <div class='do'>
@@ -136,7 +136,7 @@ in the Emacs Lisp manual. As to elisp syntax, <a href="http://www.gnu.org/softwa
 <code>:foreground</code> and <code>:weight</code> are constants (that evaluate to themselves so you
 don&rsquo;t have to quote them).</p>
 <h2 id='diff'>diff-mode</h2>
-<p>While we&rsquo;re on colours, let&rsquo;s add some helpful colouring to <code>diff-mode</code> (which
+<p>While we&rsquo;re on colors, let&rsquo;s add some helpful coloring to <code>diff-mode</code> (which
 we came across earlier, in the section on the <code>vc</code> version control
 interface).<a id='fnref4' href='#fn4' class='footnote'>[4]</a></p>
 <div class='do'>
