@@ -30,7 +30,13 @@ clean:
 	rm -f *.html
 .PHONY: clean
 
-wc: basic_c.haml
+wc: $(chapters_haml)
+	@for f in $^; do \
+	  printf "%25s" $$f; \
+	  sed -Ee '/^ *(\.figure|\.window|\.modeline|\.echoarea)/,/^$$/ d' \
+	    $$f | wc; \
+	done; \
+	printf "%25s" ""; \
 	sed -Ee '/^ *(\.figure|\.window|\.modeline|\.echoarea)/,/^$$/ d' \
 	  $^ | wc
 .PHONY: wc
