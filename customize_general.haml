@@ -28,9 +28,9 @@ order, is displayed in the minibuffer; `<right>` and `<left>` (or `C-s` and
 `C-r`) navigate amongst the matches. If nothing matches, after a brief
 (and configurable) pause `ido` can search previously-used directories.
 
-Because `RET` opens the first matching file, to actually open a directory
-you'll have to use `C-f` (at the `ido-find-file` prompt) to drop back into
-normal `find-file`.
+If you are at the `ido-find-file` prompt and wish to open the directory
+currently selected, use `C-d`. This will cause Emacs to open the directory
+using Dired, the Emacs file browser.
 
 `ido` ships with Emacs but isn't present at all in the manual; read the online
 help for the `ido-find-file` command. For more details and configuration
