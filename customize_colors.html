@@ -13,7 +13,7 @@
         <h1>How to learn Emacs</h1>
         <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
         Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
-        Last updated 8 Apr 2012.</p>
+        Last updated 24 Jun 2012.</p>
       </div>
       <div id='toc'>
         <!-- Table of Contents -->
@@ -166,17 +166,20 @@ before even being passed to <code>eval-after-load</code>.</p>
 but to double-check: <code><a class='glossary' href='glossary.html#keys'>C-h f diff-mode</a></code>, follow the link to <code>diff-mode.el.gz</code>,
 and find the <code>provide</code> form near the bottom).</p>
 <h2 id='themes'>Color themes</h2>
+<p><em>Note: This section and the next, which deal with the <code>color-theme</code> package,
+were written for Emacs 23. <code>color-theme</code> is obsolete in Emacs 24, so I need
+to find a better example for installing third-party packages.</em></p>
+
 <p>Maybe you already have a favourite color theme, like <a href="http://slinky.imukuppi.org/zenburnpage/">Zenburn</a> or <a href="http://ethanschoonover.com/solarized">Solarized</a>. There are Emacs implementations
 (<a href="https://github.com/bbatsov/zenburn-emacs">Zenburn</a>, <a href="https://github.com/sellout/emacs-color-theme-solarized">Solarized</a>) built on top of the
 <a href="http://www.nongnu.org/color-theme/"><code>color-theme</code></a> <a class='glossary' href='glossary.html#minormode'>minor mode</a>. <code>color-theme</code>
 is a third-party package; it doesn&rsquo;t come with Emacs.</p>
 
-<p>Note that Emacs 24, which hasn&rsquo;t been officially released yet, provides a
-built-in mechanism for defining multiple color themes. Nevertheless, I&rsquo;ll walk
-you through the process of installing third-party packages using <code>color-theme</code>
-and the Solarized theme as examples.</p>
-<!-- TODO: Find a better example once Emacs 24 is released. -->
-<p>Emacs 24 will also come with a package management system, so&mdash;as long as the
+<p>Note that Emacs 24 provides a built-in mechanism for defining multiple color
+themes. Nevertheless, I&rsquo;ll walk you through the process of installing
+third-party packages using <code>color-theme</code> and the Solarized theme as examples.</p>
+
+<p>Emacs 24 also comes with a package management system, so&mdash;as long as the
 package&rsquo;s author has taken advantage of the new mechanism&mdash;the manual
 installation procedure described below will not be necessary either.</p>
 <h2 id='packages'>Installing third-party elisp packages</h2>
