@@ -40,13 +40,7 @@ Emacs prompt before quitting:
 
 .window<
   :preserve
-    (<span class="keyword">defun</span> <span class="function-name">ask-before-closing</span> ()
-      (interactive)
-      (<span class="keyword">if</span> (y-or-n-p <span class="string">"Are you sure you want to exit Emacs? "</span>)
-          (save-buffers-kill-emacs)
-        (message <span class="string">"Canceled exit"</span>)))
-    (global-set-key (kbd <span class="string">"s-q"</span>) 'ask-before-closing)
-
+    (setq confirm-kill-emacs 'y-or-n-p)
 
 %h2 System-wide PATH
 

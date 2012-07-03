@@ -13,7 +13,7 @@
         <h1>How to learn Emacs</h1>
         <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
         Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
-        Last updated 8 Apr 2012.</p>
+        Last updated 3 Jul 2012.</p>
       </div>
       <div id='toc'>
         <!-- Table of Contents -->
@@ -83,7 +83,7 @@ as the terminal program will intercept the Command keybindings.</p>
 <p>If you choose to leave the Command modifier alone, you might want to rebind
 <code>⌘-q</code> because it is so close to the frequently-used <code><a class='glossary' href='glossary.html#keys'>M-q</a></code>. Or at least make
 Emacs prompt before quitting:</p>
-<div class='window'>(<span class="keyword">defun</span> <span class="function-name">ask-before-closing</span> ()&#x000A;  (interactive)&#x000A;  (<span class="keyword">if</span> (y-or-n-p <span class="string">"Are you sure you want to exit Emacs? "</span>)&#x000A;      (save-buffers-kill-emacs)&#x000A;    (message <span class="string">"Canceled exit"</span>)))&#x000A;(global-set-key (kbd <span class="string">"s-q"</span>) 'ask-before-closing)&#x000A;&#x000A;</div>
+<div class='window'>(setq confirm-kill-emacs 'y-or-n-p)&#x000A;</div>
 <h2>System-wide PATH</h2>
 <p>When you start Emacs.app from the Finder (or the Dock, or Spotlight) the
 environment doesn&rsquo;t contain customizations from your <code>.bash_profile</code> or
