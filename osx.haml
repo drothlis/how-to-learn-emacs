@@ -47,6 +47,12 @@ Emacs prompt before quitting:
         (message <span class="string">"Canceled exit"</span>)))
     (global-set-key (kbd <span class="string">"s-q"</span>) 'ask-before-closing)
 
+Alternatively, you can set the `confirm-kill-emacs` hook:
+
+.window<
+  :preserve
+    (setq confirm-kill-emacs 'yes-or-no-p)
+
 
 %h2 System-wide PATH
 
