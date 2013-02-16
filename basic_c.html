@@ -13,7 +13,7 @@
         <h1>How to learn Emacs</h1>
         <p>By <a href="http://david.rothlis.net">David Röthlisberger</a>.<br/>
         Comments welcome at <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#100;&#97;&#118;&#105;&#x64;&#64;&#x72;&#x6f;&#116;&#x68;&#x6c;&#105;&#115;&#46;&#110;&#x65;&#x74;?subject=How%20to%20learn%20Emacs">&#100;&#97;&#x76;&#x69;&#x64;&#64;&#114;&#111;&#x74;&#x68;&#x6c;&#x69;&#x73;&#46;&#x6e;&#x65;&#x74;</a>.<br/>
-        Last updated 16 Nov 2012.</p>
+        Last updated 16 Feb 2013.</p>
       </div>
       <div id='toc'>
         <!-- Table of Contents -->
@@ -535,7 +535,9 @@ changes.</p>
 <div class='do'>
   <p><code><a class='glossary' href='glossary.html#keys'>M-x gdb</a></code>. When prompted for the command-line to use, specify the program
   <code>examples/rl</code> as an argument to <code>gdb</code>: if you&rsquo;re in the <code>readline/examples</code>
-  directory, the command-line will look like <code>gdb ‑‑annotate=3 ./rl</code>.</p>
+  directory, the command-line will look like <code>gdb ‑‑annotate=3 ./rl</code>. The default
+  options for <code>gdb</code> may differ on your system so you may want to use them
+  instead.</p>
 </div>
 <p>You are now running <code>gdb</code> inside Emacs, so the standard <code>gdb</code> commands apply.
 Let&rsquo;s set a breakpoint in the <code>readline</code> function, start the <code>rl</code> program, and
