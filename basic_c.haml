@@ -638,7 +638,9 @@ changes.
 .do
   `M-x gdb`. When prompted for the command-line to use, specify the program
   `examples/rl` as an argument to `gdb`: if you're in the `readline/examples`
-  directory, the command-line will look like `gdb ‑‑annotate=3 ./rl`.
+  directory, the command-line will look like `gdb ‑‑annotate=3 ./rl`. The default
+  options for `gdb` may differ on your system so you may want to use them
+  instead.
 
 You are now running `gdb` inside Emacs, so the standard `gdb` commands apply.
 Let's set a breakpoint in the `readline` function, start the `rl` program, and
